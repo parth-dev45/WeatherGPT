@@ -15,7 +15,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("chat");
   const [searchLocation, setSearchLocation] = useState("Pune");
   const [weatherData, setWeatherData] = useState(null);
-  const [activeAlertCount, setActiveAlertCount] = useState(4);
+  const [activeAlerts, setActiveAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Initial Welcome Messages
@@ -41,7 +41,7 @@ export default function App() {
         const data = await fetchCurrentWeather("Pune");
         setWeatherData(data);
         const alerts = await fetchActiveAlerts();
-        setActiveAlertCount(alerts.length);
+        setActiveAlerts(alerts);
       } catch (e) {
         console.error("Initial data load error:", e);
       }
@@ -60,49 +60,57 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const response = await sendChatQuery(text, currentPersona, currentLanguage, searchLocation);
+      const resp = await sendChatQuery(text, currentPersona, currentLanguage, searchLocation);
+      
       const botMsg = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: response.markdown_response,
-        speech_text: response.speech_text,
-        weather: response.structured_weather,
-        alerts: response.alerts,
-        suggested_actions: response.suggested_actions
+        text: resp.markdown_response,
+        speech_text: resp.speech_text,
+        weather: resp.structured_weather,
+        alerts: resp.alerts,
+        agri_advisory: resp.agri_advisory,
+        aviation_briefing: resp.aviation_briefing,
+        marine_advisory: resp.marine_advisory,
+        suggested_actions: resp.suggested_actions,
+        quick_suggestions: resp.quick_suggestions
       };
+
       setMessages((prev) => [...prev, botMsg]);
 
-      // If response contained weather telemetry, update dashboard state
-      if (response.structured_weather) {
-        setWeatherData(response.structured_weather);
-        setSearchLocation(response.structured_weather.location);
+      // If response contained structured weather, sync to active search state
+      if (resp.structured_weather) {
+        setWeatherData(resp.structured_weather);
+        setSearchLocation(resp.structured_weather.location);
       }
     } catch (err) {
-      console.error("Chat error:", err);
-      const errorMsg = {
-        id: `bot-err-${Date.now()}`,
-        sender: "bot",
-        text: "⚠️ Unable to connect to WeatherGPT Backend. Please ensure the FastAPI server is running on `http://127.0.0.1:8000`.",
-        speech_text: "Connection error with weather server."
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `err-${Date.now()}`,
+          sender: "bot",
+          text: "⚠️ **Communication Anomaly**: Could not connect to the WeatherGPT forecasting cluster. Please ensure the backend server is running and try again.",
+          speech_text: "Could not connect to the weather forecasting cluster. Please try again."
+        }
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Location Search
+  // Search Submit
   const handleSearchSubmit = async (e) => {
     if (e) e.preventDefault();
     if (!searchLocation.trim()) return;
+
     setIsLoading(true);
     try {
       const data = await fetchCurrentWeather(searchLocation.trim());
       setWeatherData(data);
-      // Auto query chat for the searched location
-      handleSendMessage(`Current weather and 7-day outlook for ${searchLocation.trim()}`);
-    } catch (e) {
-      console.error(e);
+      handleSendMessage(`Give me a complete weather intelligence and hazard summary for ${searchLocation.trim()}`);
+    } catch (err) {
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -148,7 +156,8 @@ export default function App() {
         setPersona={setPersona}
         currentLanguage={currentLanguage}
         setLanguage={setLanguage}
-        activeAlertCount={activeAlertCount}
+        activeAlerts={activeAlerts}
+        activeAlertCount={activeAlerts.length}
         searchLocation={searchLocation}
         setSearchLocation={setSearchLocation}
         onSearchSubmit={handleSearchSubmit}
@@ -190,37 +199,47 @@ export default function App() {
 
         {activeTab === "agri" && (
           <AgriAdvisor
-            currentDistrict={weatherData ? weatherData.location : "Nagpur"}
-            currentState={weatherData ? weatherData.state : "Maharashtra"}
+            location={searchLocation}
+            onAskAI={handleAskAI}
+          />
+        )}
+
+        {activeTab === "aviation_marine" && (
+          <AviationMarine
+            location={searchLocation}
             onAskAI={handleAskAI}
           />
         )}
 
         {activeTab === "alerts" && (
           <AlertCenter
-            onAskAI={handleAskAI}
-            onFocusMapZone={() => setActiveTab("map")}
+            onSelectAlertLocation={(loc) => {
+              setSearchLocation(loc);
+              handleAskAI(`Disaster advisory and mitigation instructions for active alert in ${loc}`);
+            }}
           />
         )}
 
         {activeTab === "climate" && (
-          <ClimateAnalytics
-            onAskAI={handleAskAI}
-          />
-        )}
-
-        {(currentPersona === "aviation" || currentPersona === "marine") && activeTab === "dashboard" && (
-          <div className="mt-6">
-            <AviationMarine onAskAI={handleAskAI} />
-          </div>
+          <ClimateAnalytics />
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-800/80 py-3 text-center text-xs text-gray-500 glass-panel">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <span>WeatherGPT Platform • Ministry of Earth Sciences (MoES) / IMD Innovation</span>
-          <span className="font-mono text-[11px] text-gray-400">ITU CAP v1.2 • WMO WIS2.0 • GFS-WRF Ensemble 0.125°</span>
+      {/* Modern Status Footer */}
+      <footer className="glass-panel border-t border-slate-800/80 py-2.5 px-4 text-center text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-200">WeatherGPT Platform</span>
+            <span>•</span>
+            <span>Ministry of Earth Sciences (MoES) / IMD Innovation</span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] font-mono text-slate-300">
+            <span>ITU CAP v1.2</span>
+            <span>•</span>
+            <span>WMO WIS2.0</span>
+            <span>•</span>
+            <span>GFS-WRF Ensemble 0.125°</span>
+          </div>
         </div>
       </footer>
     </div>

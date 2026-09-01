@@ -30,7 +30,8 @@ export default function Navbar({
   setPersona,
   currentLanguage,
   setLanguage,
-  activeAlertCount,
+  activeAlerts = [],
+  activeAlertCount = 0,
   searchLocation,
   setSearchLocation,
   onSearchSubmit,
@@ -53,14 +54,28 @@ export default function Navbar({
         </div>
         <div className="overflow-hidden whitespace-nowrap mx-4 flex-1">
           <div className="animate-marquee inline-block font-medium text-[11px] text-red-100">
-            🚨 <span className="font-bold text-red-300">[RED ALERT]</span> Cyclone 'VAAYU' approaching Odisha-WB Coast (120 kmph) • ⚠️ <span className="font-bold text-orange-300">[ORANGE ALERT]</span> Severe Heatwave across Vidarbha & West Rajasthan • ⚡ <span className="font-bold text-yellow-300">[DAMINI]</span> Cloud-to-ground lightning warnings active in Gangetic plains.
+            {activeAlerts && activeAlerts.length > 0 ? (
+              activeAlerts.map((alt, idx) => (
+                <span key={alt.id || idx} className="inline-block mr-8">
+                  {alt.severity === "Red" ? "🚨" : alt.severity === "Orange" ? "⚠️" : "⚡"}{" "}
+                  <span className={`font-bold ${alt.severity === "Red" ? "text-red-300" : alt.severity === "Orange" ? "text-orange-300" : "text-yellow-300"}`}>
+                    [{alt.severity.toUpperCase()} ALERT]
+                  </span>{" "}
+                  {alt.headline}
+                </span>
+              ))
+            ) : (
+              <span>
+                📡 <span className="font-bold text-emerald-300">[LIVE TELEMETRY]</span> Real-time hazard monitoring active across all Indian meteorological observation stations • GFS/WRF model ensemble operational.
+              </span>
+            )}
           </div>
         </div>
         <button 
           onClick={() => setActiveTab("alerts")} 
-          className="flex-shrink-0 text-[10px] font-bold bg-red-600/80 hover:bg-red-500 text-white px-2 py-0.5 rounded-full transition shadow-sm"
+          className="flex-shrink-0 text-[10px] font-bold bg-red-600/80 hover:bg-red-500 text-white px-2.5 py-0.5 rounded-full transition shadow-sm"
         >
-          {activeAlertCount} Warnings Active →
+          {activeAlertCount} {activeAlertCount === 1 ? "Warning" : "Warnings"} Active →
         </button>
       </div>
 
@@ -78,39 +93,39 @@ export default function Navbar({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-lg font-black tracking-tight text-white flex items-center font-heading">
-                Weather<span className="text-sky-400">GPT</span>
+                Weather<span className="gradient-text-sky">GPT</span>
               </span>
-              <span className="text-[9px] uppercase font-extrabold tracking-widest px-2 py-0.5 rounded-full bg-gradient-to-r from-sky-500/20 to-blue-500/20 text-sky-300 border border-sky-500/30">
+              <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
                 MoES • IMD
               </span>
             </div>
-            <p className="text-[11px] text-gray-400 font-medium">Conversational AI & Early Warning Hub</p>
+            <p className="text-[10px] text-slate-400 font-medium">Conversational AI & Early Warning Hub</p>
           </div>
         </div>
 
-        {/* Global Search Location Bar */}
-        <form onSubmit={onSearchSubmit} className="flex-1 max-w-sm min-w-[240px]">
+        {/* Global Search Bar */}
+        <form onSubmit={onSearchSubmit} className="flex-1 max-w-md mx-2 min-w-[240px]">
           <div className="relative flex items-center">
-            <Search size={14} className="absolute left-3 text-gray-400 pointer-events-none" />
+            <Search size={15} className="absolute left-3 text-slate-400" />
             <input
               type="text"
               value={searchLocation}
               onChange={(e) => setSearchLocation(e.target.value)}
-              placeholder="Search City, Agri District, Airport or Mandi..."
-              className="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-500 focus:bg-slate-950 rounded-xl py-1.5 pl-8 pr-16 text-xs text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500/30 transition shadow-inner"
+              placeholder="Search 250+ Indian cities, districts or tehsils..."
+              className="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 rounded-xl py-1.5 pl-9 pr-20 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner"
             />
             <div className="absolute right-1 flex items-center gap-1">
               <button
                 type="button"
                 onClick={onDetectLocation}
-                title="Detect GPS Location"
-                className="p-1 rounded-lg text-gray-400 hover:text-sky-400 hover:bg-slate-800 transition"
+                title="Auto-detect GPS Location"
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-sky-400 transition"
               >
                 <Navigation size={13} />
               </button>
               <button
                 type="submit"
-                className="bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition shadow-sm"
+                className="bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition"
               >
                 Go
               </button>
@@ -118,18 +133,18 @@ export default function Navbar({
           </div>
         </form>
 
-        {/* Language Selector */}
+        {/* Language & Action Controls */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-xl px-2.5 py-1 text-xs">
-            <Globe size={13} className="text-sky-400" />
+          {/* Language Selector */}
+          <div className="relative flex items-center">
             <select
               value={currentLanguage}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-[11px] font-medium text-gray-200 focus:outline-none cursor-pointer pr-1"
+              className="bg-slate-900/90 border border-slate-700/80 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-sky-500 font-medium cursor-pointer shadow-sm"
             >
-              {LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code} className="bg-slate-900 text-gray-100">
-                  {l.name}
+              {LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code} className="bg-slate-900 text-slate-200">
+                  {lang.name}
                 </option>
               ))}
             </select>
@@ -137,94 +152,82 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Sub-bar: Persona Pills & Tab Navigators */}
-      <div className="border-t border-slate-800/80 bg-slate-950/60 px-4 py-1.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto gap-3 no-scrollbar">
-          {/* Persona Mode Pills */}
-          <div className="flex items-center gap-1 flex-shrink-0">
-            <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider mr-1">
+      {/* Secondary Persona & Navigation Bar */}
+      <div className="border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md px-4 py-1.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+          {/* Persona Switcher Pills */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1 hidden sm:inline">
               Persona:
             </span>
             {PERSONAS.map((p) => {
-              const active = currentPersona === p.id;
+              const isActive = currentPersona === p.id;
               return (
                 <button
                   key={p.id}
                   onClick={() => setPersona(p.id)}
-                  className={`flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg font-semibold transition-all ${
-                    active
-                      ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm shadow-sky-500/20"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
+                  title={p.desc}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
+                    isActive
+                      ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-850"
                   }`}
                 >
                   <span>{p.icon}</span>
-                  <span>{p.label}</span>
+                  <span className="text-[11px] whitespace-nowrap">{p.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Tab Navigation Buttons */}
-          <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-xl border border-slate-800 flex-shrink-0">
+          {/* Module Tab Switcher */}
+          <div className="flex items-center gap-1 border-l border-slate-800 pl-3">
             <button
               onClick={() => setActiveTab("chat")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "chat" 
-                  ? "bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md shadow-sky-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "chat" ? "tab-pill-active" : ""}`}
             >
-              <span>💬</span> AI Chat & Voice
+              <Sparkles size={13} />
+              <span>AI Chat & Voice</span>
             </button>
+
             <button
               onClick={() => setActiveTab("map")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "map" 
-                  ? "bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md shadow-sky-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "map" ? "tab-pill-active" : ""}`}
             >
-              <span>🗺️</span> GIS Radar Map
+              <span>🗺️</span>
+              <span>GIS Radar Map</span>
             </button>
+
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "dashboard" 
-                  ? "bg-gradient-to-r from-sky-600 to-blue-600 text-white shadow-md shadow-sky-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "dashboard" ? "tab-pill-active" : ""}`}
             >
-              <span>📊</span> Forecast Matrix
+              <span>📊</span>
+              <span>Forecast Matrix</span>
             </button>
+
             <button
               onClick={() => setActiveTab("agri")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "agri" 
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "agri" ? "tab-pill-active" : ""}`}
             >
-              <span>🌾</span> Agromet
+              <Sprout size={13} />
+              <span>Agromet</span>
             </button>
+
             <button
               onClick={() => setActiveTab("alerts")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "alerts" 
-                  ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "alerts" ? "tab-pill-active" : ""}`}
             >
-              <span>🚨</span> Warnings ({activeAlertCount})
+              <ShieldAlert size={13} />
+              <span>Warnings ({activeAlertCount})</span>
             </button>
+
             <button
               onClick={() => setActiveTab("climate")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "climate" 
-                  ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/30" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              className={`tab-pill ${activeTab === "climate" ? "tab-pill-active" : ""}`}
             >
-              <span>📈</span> Climate Trends
+              <TrendingUp size={13} />
+              <span>Climate</span>
             </button>
           </div>
         </div>
