@@ -9,6 +9,45 @@ import AlertCenter from "./components/AlertCenter";
 import ClimateAnalytics from "./components/ClimateAnalytics";
 import { sendChatQuery, fetchCurrentWeather, fetchActiveAlerts } from "./services/api";
 
+const WELCOME_GREETINGS = {
+  hi: {
+    text: "नमस्ते! 🙏 **WeatherGPT** में आपका स्वागत है — पृथ्वी विज्ञान मंत्रालय (MoES) और भारत मौसम विज्ञान विभाग (IMD) का AI मौसम सहायक।\n\nआप मुझसे किसी भी शहर का वास्तविक समय मौसम, वर्षा पूर्वानुमान, **मेघदूत कृषि सलाह**, **दामिनी बिजली अलर्ट**, या **आपदा चेतावनी** पूछ सकते हैं।",
+    speech: "नमस्ते! वेदर जीपीटी में आपका स्वागत है। आप मुझसे मौसम पूर्वानुमान या आपदा अलर्ट पूछ सकते हैं।"
+  },
+  mr: {
+    text: "नमस्कार! 🙏 **WeatherGPT** मध्ये आपले स्वागत आहे — पृथ्वी विज्ञान मंत्रालय (MoES) व भारतीय हवामान विभाग (IMD) चा AI हवामान सहाय्यक।\n\nतुम्ही मला कोणत्याही ठिकाणचा हवामान अंदाज, पाऊस, **शेतकरी मेघदूत कृषी सल्ला**, **दामिनी वीज इशारा** किंवा **आपत्ती इशारे** विचारू शकता।",
+    speech: "नमस्कार! वेदर जीपीटी मध्ये आपले स्वागत आहे. आपण हवामान अंदाज किंवा आपत्ती इशारे विचारू शकता."
+  },
+  ta: {
+    text: "வணக்கம்! 🙏 **WeatherGPT** க்கு வரவேற்கிறோம் — புவி அறிவியல் அமைச்சகம் (MoES) மற்றும் இந்திய வானிலை ஆய்வுத் துறையின் (IMD) AI வானிலை தளம்.\n\nவானிலை நிலவரம், மழை முன்னறிவிப்பு, **மேகதூத் விவசாய ஆலோசனை**, அல்லது **பேரிடர் எச்சரிக்கைகளை** இங்கே கேட்கலாம்.",
+    speech: "வணக்கம்! வெதர் ஜிபிடிக்கு வரவேற்கிறோம். வானிலை தகவல்களை நீங்கள் கேட்கலாம்."
+  },
+  te: {
+    text: "నమస్కారం! 🙏 **WeatherGPT** కి స్వాగతం — భూ విజ్ఞాన మంత్రిత్వ శాఖ (MoES) & భారత వాతావరణ శాఖ (IMD) AI ప్లాట్‌ఫామ్.\n\nమీరు ఏ నగర వాతావరణం, వర్ష సూచన, **మేఘదూత్ రైతు సలహాలు**, లేదా **విపత్తు హెచ్చరికలు** అడగవచ్చు.",
+    speech: "నమస్కారం! వెదర్ జిపిటికి స్వాగతం. వాతావరణ సమాచారం కోసం అడగండి."
+  },
+  bn: {
+    text: "নমস্কার! 🙏 **WeatherGPT** তে আপনাকে স্বাগতম — ভূবিজ্ঞান মন্ত্রক (MoES) এবং ভারতীয় আবহাওয়া অধিদপ্তরের (IMD) AI আবহাওয়া সহায়ক।\n\nআপনি যেকোনো শহরের আবহাওয়া, বৃষ্টির পূর্বাভাস, **মেঘদূত কৃষি পরামর্শ**, অথবা **দুর্যোগ সতর্কতা** জানতে পারেন।",
+    speech: "নমস্কার! ওয়েদার জিপিটিতে আপনাকে স্বাগতম।"
+  },
+  gu: {
+    text: "નમસ્તે! 🙏 **WeatherGPT** માં આપનું સ્વાગત છે — પૃથ્વી વિજ્ઞાન મંત્રાલય (MoES) અને ભારતીય હવામાન વિભાગ (IMD) નું AI પ્લેટફોર્મ.\n\nતમે કોઈપણ શહેરનું હવામાન, વરસાદની આગાહી, **મેઘદૂત કૃષિ સલાહ**, અથવા **આપત્તિ ચેતવણી** પૂછી શકો છો.",
+    speech: "નમસ્તે! વેધર જીપીટીમાં આપનું સ્વાગત છે."
+  },
+  pa: {
+    text: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! 🙏 **WeatherGPT** ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ — ਧਰਤੀ ਵਿਗਿਆਨ ਮੰਤਰਾਲਾ (MoES) ਅਤੇ ਭਾਰਤ ਮੌਸਮ ਵਿਭਾਗ (IMD) ਦਾ AI ਮੌਸਮ ਸਹਾਇਕ।\n\nਤੁਸੀਂ ਮੌਸਮ, ਮੀਂਹ ਦੀ ਭਵਿੱਖਬਾਣੀ, **ਮੇਘਦੂਤ ਖੇਤੀਬਾੜੀ ਸਲਾਹ**, ਜਾਂ **ਆਫ਼ਤ ਚੇਤਾਵਨੀਆਂ** ਬਾਰੇ ਪੁੱਛ ਸਕਦੇ ਹੋ।",
+    speech: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਵੈਦਰ ਜੀਪੀਟੀ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ।"
+  },
+  kn: {
+    text: "ನಮಸ್ಕಾರ! 🙏 **WeatherGPT** ಗೆ ಸುಸ್ವಾಗತ — ಭೂ ವಿಜ್ಞಾನ ಸಚಿವಾಲಯ (MoES) ಮತ್ತು ಭಾರತೀಯ ಹವಾಮಾನ ಇಲಾಖೆಯ (IMD) AI ಹವಾಮಾನ ಸಹಾಯಕ.\n\nನೀವು ಹವಾಮಾನ ಮುನ್ಸೂಚನೆ, ಮಳೆ, **ಮೇಘದೂತ್ ಕೃಷಿ ಸಲಹೆ**, ಅಥವಾ **ವಿಪತ್ತು ಎಚ್ಚರಿಕೆಗಳನ್ನು** ಕೇಳಬಹುದು.",
+    speech: "ನಮಸ್ಕಾರ! ವೆದರ್ ಜಿಪಿಟಿಗೆ ಸುಸ್ವಾಗತ."
+  },
+  en: {
+    text: "Namaste! 🙏 Welcome to **WeatherGPT** — the AI conversational intelligence platform built for the **Ministry of Earth Sciences (MoES)** and **India Meteorological Department (IMD)**.\n\nAsk me anything regarding real-time forecasts, GFS/WRF model outputs, **Agromet crop advisories (Meghdoot)**, **Damini lightning risks**, **aviation METAR/TAF**, **marine sea states**, or **ITU CAP disaster warnings** in 10+ Indian languages.",
+    speech: "Namaste! Welcome to WeatherGPT. How can I assist you with weather forecasts or disaster alerts today?"
+  }
+};
+
 export default function App() {
   const [currentPersona, setPersona] = useState("general");
   const [currentLanguage, setLanguage] = useState("auto");
@@ -23,8 +62,8 @@ export default function App() {
     {
       id: "init-1",
       sender: "bot",
-      text: "Namaste! 🙏 Welcome to **WeatherGPT** — the AI conversational intelligence platform built for the **Ministry of Earth Sciences (MoES)** and **India Meteorological Department (IMD)**.\n\nAsk me anything regarding real-time forecasts, GFS/WRF model outputs, **Agromet crop advisories (Meghdoot)**, **Damini lightning risks**, **aviation METAR/TAF**, **marine sea states**, or **ITU CAP disaster warnings** in 10+ Indian languages.",
-      speech_text: "Namaste! Welcome to WeatherGPT. How can I assist you with weather forecasts or disaster alerts today?",
+      text: WELCOME_GREETINGS.en.text,
+      speech_text: WELCOME_GREETINGS.en.speech,
       suggested_actions: [
         { label: "View Doppler Radar Map", action: "open_map" },
         { label: "7-Day Forecast Matrix", action: "open_dashboard" },
@@ -33,6 +72,26 @@ export default function App() {
       ]
     }
   ]);
+
+  // When language is selected in Navbar, switch the greeting language
+  const handleLanguageChange = (newLang) => {
+    setLanguage(newLang);
+    const greeting = WELCOME_GREETINGS[newLang] || WELCOME_GREETINGS.en;
+    setMessages([
+      {
+        id: `lang-switch-${Date.now()}`,
+        sender: "bot",
+        text: greeting.text,
+        speech_text: greeting.speech,
+        suggested_actions: [
+          { label: "View Doppler Radar Map", action: "open_map" },
+          { label: "7-Day Forecast Matrix", action: "open_dashboard" },
+          { label: "Farmers Agromet Advisory", action: "open_agri" },
+          { label: "Active CAP Disaster Alerts", action: "open_alerts" }
+        ]
+      }
+    ]);
+  };
 
   // Initial Weather Load for default location
   useEffect(() => {
@@ -155,7 +214,7 @@ export default function App() {
         currentPersona={currentPersona}
         setPersona={setPersona}
         currentLanguage={currentLanguage}
-        setLanguage={setLanguage}
+        setLanguage={handleLanguageChange}
         activeAlerts={activeAlerts}
         activeAlertCount={activeAlerts.length}
         searchLocation={searchLocation}
