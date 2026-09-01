@@ -7,6 +7,7 @@ import AgriAdvisor from "./components/AgriAdvisor";
 import AviationMarine from "./components/AviationMarine";
 import AlertCenter from "./components/AlertCenter";
 import ClimateAnalytics from "./components/ClimateAnalytics";
+import CityComparison from "./components/CityComparison";
 import { sendChatQuery, fetchCurrentWeather, fetchActiveAlerts } from "./services/api";
 
 const WELCOME_GREETINGS = {
@@ -276,6 +277,12 @@ export default function App() {
               setSearchLocation(loc);
               handleAskAI(`Disaster advisory and mitigation instructions for active alert in ${loc}`);
             }}
+          />
+        )}
+
+        {activeTab === "compare" && (
+          <CityComparison
+            onAskAI={handleAskAI}
           />
         )}
 

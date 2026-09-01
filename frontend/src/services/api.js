@@ -65,3 +65,9 @@ export async function fetchClimateTrends(region = "All India") {
   if (!res.ok) throw new Error("Failed to fetch climate trends");
   return await res.json();
 }
+
+export async function fetchCityComparison(city1 = "Mumbai", city2 = "Delhi") {
+  const res = await fetch(`${API_BASE_URL}/weather/compare?city1=${encodeURIComponent(city1)}&city2=${encodeURIComponent(city2)}`);
+  if (!res.ok) throw new Error("Failed to fetch city comparison");
+  return await res.json();
+}

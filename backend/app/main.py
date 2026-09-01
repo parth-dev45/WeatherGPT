@@ -4,9 +4,9 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from .schemas.models import (
     WeatherQueryRequest, ChatResponse, WeatherData, CAPAlert,
-    AgriCropAdvisory, AviationBriefing, MarineAdvisory
+    AgriCropAdvisory, AviationBriefing, MarineAdvisory, CityComparisonData
 )
-from .services.weather_service import geocode_location, fetch_weather_data
+from .services.weather_service import geocode_location, fetch_weather_data, compare_locations
 from .services.alert_service import get_active_alerts, get_cyclone_track_geojson
 from .services.agri_advisory import generate_crop_advisory, CROP_DATABASE
 from .services.aviation_service import get_aviation_briefing
@@ -59,6 +59,14 @@ def get_current_weather(
         proper_name = location
         state_name = "India"
     return fetch_weather_data(lat, lon, proper_name, state_name)
+
+@app.get("/api/weather/compare", response_model=CityComparisonData)
+def get_weather_comparison(
+    city1: str = Query("Mumbai", description="First city for comparison"),
+    city2: str = Query("Delhi", description="Second city for comparison")
+):
+    """Compares weather, AQI, travel route safety, and health personas between two cities."""
+    return compare_locations(city1, city2)
 
 @app.get("/api/alerts/active", response_model=List[CAPAlert])
 def get_alerts(

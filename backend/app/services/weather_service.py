@@ -1,7 +1,7 @@
 import requests
 import datetime
 from typing import Dict, Any, Optional, Tuple, List
-from ..schemas.models import WeatherData, HourlyForecast, DailyForecast
+from ..schemas.models import WeatherData, HourlyForecast, DailyForecast, CityComparisonData, HealthPersonas
 
 # Comprehensive Geocoding Index for 250+ Indian Cities, Districts, Towns, Agricultural Belts & Ports
 INDIAN_LOCATIONS: Dict[str, Tuple[float, float, str]] = {
@@ -285,7 +285,12 @@ INDIAN_LOCATIONS: Dict[str, Tuple[float, float, str]] = {
     "mussoorie": (30.4598, 78.0644, "Uttarakhand"),
     "gulmarg": (34.0484, 74.3805, "Jammu and Kashmir"),
     "pahalgam": (34.0160, 75.3150, "Jammu and Kashmir"),
-    "anantnag": (33.7311, 75.1522, "Jammu and Kashmir")
+    "anantnag": (33.7311, 75.1522, "Jammu and Kashmir"),
+    "goa": (15.4909, 73.8278, "Goa"),
+    "panaji": (15.4909, 73.8278, "Goa"),
+    "panjim": (15.4909, 73.8278, "Goa"),
+    "margao": (15.2832, 73.9862, "Goa"),
+    "vasco": (15.3982, 73.8113, "Goa")
 }
 
 WMO_CODE_MAP = {
@@ -516,4 +521,69 @@ def fetch_weather_data(lat: float, lon: float, location_name: str, state_name: s
         hourly=hourly_fallbacks,
         daily=daily_fallbacks,
         nwp_model="IMD WRF 3km Meso-Scale Model"
+    )
+
+def compare_locations(city1_str: str, city2_str: str) -> CityComparisonData:
+    """Compares weather telemetry, AQI, and travel conditions between two cities."""
+    lat1, lon1, name1, state1 = geocode_location(city1_str)
+    lat2, lon2, name2, state2 = geocode_location(city2_str)
+    
+    w1 = fetch_weather_data(lat1, lon1, name1, state1)
+    w2 = fetch_weather_data(lat2, lon2, name2, state2)
+    
+    temp_diff = round(w1.current_temp - w2.current_temp, 1)
+    warmer = name1 if temp_diff > 0 else (name2 if temp_diff < 0 else "Equal")
+    humidity_diff = w1.humidity - w2.humidity
+    
+    better_aqi = name1 if w1.aqi <= w2.aqi else name2
+    
+    # Rain risk
+    p1 = w1.hourly[0].rain_prob if w1.hourly else int(w1.precipitation > 0.5) * 50
+    p2 = w2.hourly[0].rain_prob if w2.hourly else int(w2.precipitation > 0.5) * 50
+    rain_risk = name1 if p1 > p2 else (name2 if p2 > p1 else "Equal")
+    
+    # Travel safety score (0-100)
+    score = 95
+    if w1.precipitation > 5.0 or w2.precipitation > 5.0:
+        score -= 20
+    if w1.visibility < 3.0 or w2.visibility < 3.0:
+        score -= 25
+    if w1.wind_speed > 25 or w2.wind_speed > 25:
+        score -= 15
+    if max(w1.aqi, w2.aqi) > 200:
+        score -= 10
+    score = max(30, min(100, score))
+    
+    # Travel advisory narrative
+    if score >= 85:
+        travel_adv = f"Optimal driving and travel conditions between {name1} and {name2}. Dry pavement and clear visibility throughout."
+    elif score >= 65:
+        travel_adv = f"Moderate travel caution on transit routes between {name1} and {name2}. Passing rain spells or reduced visibility possible."
+    else:
+        travel_adv = f"High travel risk! Active convective rain and reduced road friction on corridor between {name1} and {name2}. Allow extra travel time."
+        
+    # Health personas
+    athletes_adv = f"{better_aqi} offers cleaner air (AQI {min(w1.aqi, w2.aqi)}) for outdoor running/training. Best workout window: 06:00 - 08:30 AM."
+    asthma_adv = f"Respiratory strain is lower in {better_aqi}. Keep inhalers handy in {name1 if better_aqi==name2 else name2} where AQI is {max(w1.aqi, w2.aqi)}."
+    children_adv = f"Outdoor school playtime is recommended in {better_aqi}. Ensure UV sunscreen in {warmer if warmer!='Equal' else name1}."
+    elderly_adv = f"Milder thermal comfort in {name2 if temp_diff > 0 else name1}. Avoid midday sun exposure during peak hours."
+    
+    health_personas = HealthPersonas(
+        athletes=athletes_adv,
+        asthma_patients=asthma_adv,
+        children_schools=children_adv,
+        elderly=elderly_adv
+    )
+    
+    return CityComparisonData(
+        city1=w1,
+        city2=w2,
+        temp_diff=temp_diff,
+        temp_warmer_city=warmer,
+        humidity_diff=humidity_diff,
+        aqi_better_city=better_aqi,
+        rain_risk_city=rain_risk,
+        travel_safety_score=score,
+        travel_advisory=travel_adv,
+        health_advisory=health_personas
     )

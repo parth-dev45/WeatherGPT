@@ -1,20 +1,5 @@
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
-
-class WeatherQueryRequest(BaseModel):
-    query: str = Field(..., description="User natural language question in English, Hindi, Marathi, Tamil, etc.")
-    language: Optional[str] = Field("auto", description="ISO language code or 'auto'")
-    persona: Optional[str] = Field("general", description="User persona: 'general', 'farmer', 'aviation', 'marine', 'disaster_manager'")
-    lat: Optional[float] = Field(None, description="Optional latitude for location grounding")
-    lon: Optional[float] = Field(None, description="Optional longitude for location grounding")
-    location_name: Optional[str] = Field(None, description="Explicit city/district name if known")
-
-class WeatherMetric(BaseModel):
-    label: str
-    value: str
-    unit: str
-    icon: Optional[str] = None
-    status: Optional[str] = None
+from pydantic import BaseModel
 
 class HourlyForecast(BaseModel):
     time: str
@@ -63,9 +48,9 @@ class CAPAlert(BaseModel):
     id: str
     headline: str
     event: str
-    severity: str  # Red, Orange, Yellow, Green
-    urgency: str   # Immediate, Expected, Future
-    certainty: str # Observed, Likely, Possible
+    severity: str  # Red, Orange, Yellow
+    urgency: str
+    certainty: str
     area_desc: str
     district: str
     state: str
@@ -109,6 +94,32 @@ class MarineAdvisory(BaseModel):
     high_tide_time: str
     low_tide_time: str
 
+class HealthPersonas(BaseModel):
+    athletes: str
+    asthma_patients: str
+    children_schools: str
+    elderly: str
+
+class CityComparisonData(BaseModel):
+    city1: WeatherData
+    city2: WeatherData
+    temp_diff: float  # city1 - city2
+    temp_warmer_city: str
+    humidity_diff: int
+    aqi_better_city: str
+    rain_risk_city: str
+    travel_safety_score: int  # 0-100
+    travel_advisory: str
+    health_advisory: HealthPersonas
+
+class WeatherQueryRequest(BaseModel):
+    query: str
+    persona: Optional[str] = "general"
+    language: Optional[str] = "en"
+    location_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+
 class ChatResponse(BaseModel):
     query: str
     detected_language: str
@@ -116,6 +127,7 @@ class ChatResponse(BaseModel):
     speech_text: str
     markdown_response: str
     structured_weather: Optional[WeatherData] = None
+    comparison_data: Optional[CityComparisonData] = None
     alerts: Optional[List[CAPAlert]] = None
     agri_advisory: Optional[AgriCropAdvisory] = None
     aviation_briefing: Optional[AviationBriefing] = None

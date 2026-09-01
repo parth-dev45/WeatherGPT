@@ -1,13 +1,13 @@
 import re
 import datetime
 from typing import Dict, Any, Tuple, Optional, List
-from .weather_service import geocode_location, fetch_weather_data, INDIAN_LOCATIONS
+from .weather_service import geocode_location, fetch_weather_data, compare_locations, INDIAN_LOCATIONS
 from .alert_service import get_active_alerts
 from .agri_advisory import generate_crop_advisory
 from .aviation_service import get_aviation_briefing
 from .marine_service import get_marine_advisory
 from .historical_service import get_climate_trend_data
-from ..schemas.models import WeatherQueryRequest, ChatResponse, WeatherData
+from ..schemas.models import WeatherQueryRequest, ChatResponse, WeatherData, CityComparisonData
 
 # Indic regional name transliteration mappings
 INDIC_LOCATION_TRANSLITERATIONS = {
@@ -232,11 +232,78 @@ def format_human_weather_story(weather: WeatherData, proper_name: str, state_nam
         f"- ☀️ **Solar UV:** UV Index is **{weather.uv_index}** ({'Very High' if weather.uv_index > 7 else 'Moderate'}) with Sunrise at **{weather.sunrise} IST** and Sunset at **{weather.sunset} IST**.\n"
     )
 
+def extract_two_locations(text: str) -> Tuple[str, str]:
+    """Extracts two city names for comparison queries."""
+    patterns = [
+        r'(?:compare|between)\s+([A-Za-z]+)\s+(?:and|vs|with|to)\s+([A-Za-z]+)',
+        r'([A-Za-z]+)\s+(?:vs|versus)\s+([A-Za-z]+)',
+        r'([A-Za-z]+)\s+(?:or|and)\s+([A-Za-z]+)\s+weather',
+        r'([A-Za-z]+)\s+(?:hotter|colder|better|warmer)\s+than\s+([A-Za-z]+)'
+    ]
+    for p in patterns:
+        m = re.search(p, text, re.IGNORECASE)
+        if m:
+            c1, c2 = m.group(1).strip().title(), m.group(2).strip().title()
+            if c1.lower() not in STOPWORDS and c2.lower() not in STOPWORDS:
+                return c1, c2
+    return "Mumbai", "Delhi"
+
 def process_conversational_query(req: WeatherQueryRequest) -> ChatResponse:
     """Main LLM Tool Calling and Query Processing Engine with Multilingual Generation."""
     query = req.query.strip()
     lang = req.language if req.language and req.language != "auto" else detect_language(query)
     persona = req.persona or "general"
+    q_low = query.lower()
+
+    # Comparison Intent
+    is_compare = any(k in q_low for k in ["compare", " vs ", "versus", "hotter than", "colder than", "warmer than", "better than", "तुलना", "तुलना करा", "ஒப்பீடு", "పోలిక"])
+    if is_compare:
+        c1, c2 = extract_two_locations(query)
+        comp_data = compare_locations(c1, c2)
+        speech_text = f"Comparing {comp_data.city1.location} and {comp_data.city2.location}. {comp_data.temp_warmer_city} is warmer by {abs(comp_data.temp_diff)} degrees Celsius. Travel safety score is {comp_data.travel_safety_score} out of 100."
+        markdown_resp = (
+            f"### ⚖️ **Comparative Weather Intelligence: {comp_data.city1.location} vs {comp_data.city2.location}**\n\n"
+            f"| Metric | 📍 **{comp_data.city1.location}** ({comp_data.city1.state}) | 📍 **{comp_data.city2.location}** ({comp_data.city2.state}) | 📊 **Variance / Advantage** |\n"
+            f"| :--- | :--- | :--- | :--- |\n"
+            f"| 🌡️ **Current Temp** | **{comp_data.city1.current_temp}°C** (Feels {comp_data.city1.feels_like}°C) | **{comp_data.city2.current_temp}°C** (Feels {comp_data.city2.feels_like}°C) | **{comp_data.temp_warmer_city}** is +{abs(comp_data.temp_diff)}°C warmer |\n"
+            f"| 💧 **Humidity** | **{comp_data.city1.humidity}%** | **{comp_data.city2.humidity}%** | $\\Delta$ {abs(comp_data.humidity_diff)}% |\n"
+            f"| 💨 **Wind Speed** | **{comp_data.city1.wind_speed} km/h** ({comp_data.city1.wind_direction}) | **{comp_data.city2.wind_speed} km/h** ({comp_data.city2.wind_direction}) | — |\n"
+            f"| 🍃 **Air Quality (AQI)** | **{comp_data.city1.aqi}** ({comp_data.city1.aqi_status}) | **{comp_data.city2.aqi}** ({comp_data.city2.aqi_status}) | 🌿 **{comp_data.aqi_better_city}** has cleaner air |\n"
+            f"| 🌧️ **Precipitation** | **{comp_data.city1.precipitation} mm** ({comp_data.city1.condition}) | **{comp_data.city2.precipitation} mm** ({comp_data.city2.condition}) | 🌧️ Higher rain risk in **{comp_data.rain_risk_city}** |\n\n"
+            f"#### 🚗 **Highway & Transit Route Safety (Score: {comp_data.travel_safety_score}/100)**\n"
+            f"{comp_data.travel_advisory}\n\n"
+            f"#### 🏃 **Health & Vulnerability Personas**\n"
+            f"- 🏃 **Athletes & Runners:** {comp_data.health_advisory.athletes}\n"
+            f"- 🫁 **Asthma & Respiratory:** {comp_data.health_advisory.asthma_patients}\n"
+            f"- 👶 **Children & Schools:** {comp_data.health_advisory.children_schools}\n"
+            f"- 👴 **Senior Citizens:** {comp_data.health_advisory.elderly}\n"
+        )
+        quick_suggestions = [
+            "Compare Pune vs Goa",
+            "Compare Bengaluru vs Hyderabad",
+            "Compare Shimla vs Manali",
+            f"7-day forecast for {comp_data.city1.location}"
+        ]
+        suggested_actions = [
+            {"label": "Open Comparison Matrix", "action": "open_compare"},
+            {"label": "View Doppler Radar Map", "action": "open_map"},
+            {"label": "Active CAP Warnings", "action": "open_alerts"}
+        ]
+        return ChatResponse(
+            query=query,
+            detected_language=lang,
+            persona=persona,
+            speech_text=speech_text,
+            markdown_response=markdown_resp,
+            structured_weather=comp_data.city1,
+            comparison_data=comp_data,
+            alerts=None,
+            agri_advisory=None,
+            aviation_briefing=None,
+            marine_advisory=None,
+            quick_suggestions=quick_suggestions,
+            suggested_actions=suggested_actions
+        )
     
     # Extract location
     loc_name = extract_location_from_query(query, req.location_name)
@@ -246,7 +313,6 @@ def process_conversational_query(req: WeatherQueryRequest) -> ChatResponse:
     weather = fetch_weather_data(lat, lon, proper_name, state_name)
     
     # Identify Intent
-    q_low = query.lower()
     is_cyclone = any(k in q_low for k in ["cyclone", "storm", "vaayu", "flood", "warning", "alert", "danger", "disaster", "अलर्ट", "चेतावनी"])
     is_agri = persona == "farmer" or any(k in q_low for k in ["crop", "farmer", "paddy", "cotton", "wheat", "sugarcane", "irrigation", "spray", "pesticide", "harvest", "फसल", "धान", "गेहूं", "कापूस", "शेती"])
     is_aviation = persona == "aviation" or any(k in q_low for k in ["flight", "aviation", "metar", "taf", "airport", "pilot", "runway", "ifr", "vfr"])

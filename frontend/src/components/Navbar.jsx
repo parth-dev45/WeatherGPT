@@ -1,7 +1,7 @@
 import React from "react";
 import { 
   CloudSun, ShieldAlert, Sparkles, Navigation, Globe, UserCheck, 
-  Search, Radio, Sprout, Plane, Waves, AlertTriangle, TrendingUp, LayoutGrid 
+  Search, Radio, Sprout, Plane, Waves, AlertTriangle, TrendingUp, LayoutGrid, Scale 
 } from "lucide-react";
 
 const PERSONAS = [
@@ -239,6 +239,18 @@ export default function Navbar({
             >
               <ShieldAlert size={13} className={activeTab === "alerts" ? "text-red-400" : "text-slate-400"} />
               <span>Warnings ({activeAlertCount})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("compare")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "compare"
+                  ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
+            >
+              <Scale size={13} className={activeTab === "compare" ? "text-indigo-400" : "text-slate-400"} />
+              <span>Compare & AQI</span>
             </button>
 
             <button
