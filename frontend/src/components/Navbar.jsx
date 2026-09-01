@@ -135,7 +135,6 @@ export default function Navbar({
 
         {/* Language & Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Language Selector */}
           <div className="relative flex items-center">
             <select
               value={currentLanguage}
@@ -156,7 +155,7 @@ export default function Navbar({
       <div className="border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md px-4 py-1.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
           {/* Persona Switcher Pills */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1 hidden sm:inline">
               Persona:
             </span>
@@ -167,32 +166,40 @@ export default function Navbar({
                   key={p.id}
                   onClick={() => setPersona(p.id)}
                   title={p.desc}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                     isActive
                       ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
                       : "text-slate-400 hover:text-slate-200 hover:bg-slate-850"
                   }`}
                 >
                   <span>{p.icon}</span>
-                  <span className="text-[11px] whitespace-nowrap">{p.label}</span>
+                  <span className="text-[11px]">{p.label}</span>
                 </button>
               );
             })}
           </div>
 
           {/* Module Tab Switcher */}
-          <div className="flex items-center gap-1 border-l border-slate-800 pl-3">
+          <div className="flex items-center gap-1.5 border-l border-slate-800 pl-3 flex-shrink-0">
             <button
               onClick={() => setActiveTab("chat")}
-              className={`tab-pill ${activeTab === "chat" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "chat"
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
-              <Sparkles size={13} />
+              <Sparkles size={13} className={activeTab === "chat" ? "text-sky-400" : "text-slate-400"} />
               <span>AI Chat & Voice</span>
             </button>
 
             <button
               onClick={() => setActiveTab("map")}
-              className={`tab-pill ${activeTab === "map" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "map"
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
               <span>🗺️</span>
               <span>GIS Radar Map</span>
@@ -200,7 +207,11 @@ export default function Navbar({
 
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`tab-pill ${activeTab === "dashboard" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "dashboard"
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
               <span>📊</span>
               <span>Forecast Matrix</span>
@@ -208,25 +219,37 @@ export default function Navbar({
 
             <button
               onClick={() => setActiveTab("agri")}
-              className={`tab-pill ${activeTab === "agri" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "agri"
+                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
-              <Sprout size={13} />
+              <Sprout size={13} className={activeTab === "agri" ? "text-emerald-400" : "text-slate-400"} />
               <span>Agromet</span>
             </button>
 
             <button
               onClick={() => setActiveTab("alerts")}
-              className={`tab-pill ${activeTab === "alerts" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "alerts"
+                  ? "bg-red-500/20 text-red-300 border border-red-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
-              <ShieldAlert size={13} />
+              <ShieldAlert size={13} className={activeTab === "alerts" ? "text-red-400" : "text-slate-400"} />
               <span>Warnings ({activeAlertCount})</span>
             </button>
 
             <button
               onClick={() => setActiveTab("climate")}
-              className={`tab-pill ${activeTab === "climate" ? "tab-pill-active" : ""}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "climate"
+                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
             >
-              <TrendingUp size={13} />
+              <TrendingUp size={13} className={activeTab === "climate" ? "text-purple-400" : "text-slate-400"} />
               <span>Climate</span>
             </button>
           </div>
