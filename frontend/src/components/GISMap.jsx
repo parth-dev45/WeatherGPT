@@ -47,11 +47,11 @@ const BASEMAP_PROVIDERS = {
 };
 
 const ALERT_ZONES = [
-  { name: "Puri & Coastal Odisha", lat: 19.8135, lon: 85.8312, severity: "Red", event: "Cyclone VAAYU (120 km/h Landfall)", color: "#ef4444", radius: 95000 },
-  { name: "Vidarbha (Nagpur)", lat: 21.1458, lon: 79.0882, severity: "Orange", event: "Severe Heatwave (43.5°C)", color: "#f97316", radius: 75000 },
-  { name: "Konkan & Mumbai", lat: 19.0760, lon: 72.8777, severity: "Orange", event: "Heavy Rain / Flash Flood (180mm)", color: "#f97316", radius: 65000 },
-  { name: "Punjab (Ludhiana)", lat: 30.9010, lon: 75.8573, severity: "Yellow", event: "Isolated Thunderstorm & Hail", color: "#eab308", radius: 55000 },
-  { name: "Gangetic Plain (Varanasi)", lat: 25.3176, lon: 82.9739, severity: "Orange", event: "Damini Lightning Strikes", color: "#f97316", radius: 60000 }
+  { name: "Puri & Coastal Odisha", lat: 19.8135, lon: 85.8312, severity: "Red", event: "Deep Depression / Cyclone Genesis (110 km/h Landfall Risk)", color: "#ef4444", radius: 95000 },
+  { name: "Vidarbha (Nagpur)", lat: 21.1458, lon: 79.0882, severity: "Orange", event: "Severe Heatwave & High Thermal Stress (43.5°C)", color: "#f97316", radius: 75000 },
+  { name: "Konkan & Mumbai", lat: 19.0760, lon: 72.8777, severity: "Orange", event: "Torrential Rain & Flash Flood Risk (180mm)", color: "#f97316", radius: 65000 },
+  { name: "Punjab (Ludhiana)", lat: 30.9010, lon: 75.8573, severity: "Yellow", event: "Isolated Thunderstorm & Hail Hazard", color: "#eab308", radius: 55000 },
+  { name: "Gangetic Plain (Varanasi)", lat: 25.3176, lon: 82.9739, severity: "Orange", event: "Damini Lightning Sensor Discharges", color: "#f97316", radius: 60000 }
 ];
 
 const CYCLONE_POINTS = [
@@ -59,8 +59,8 @@ const CYCLONE_POINTS = [
   { lat: 16.0, lon: 88.2, time: "24 hrs ago" },
   { lat: 17.8, lon: 86.9, time: "12 hrs ago" },
   { lat: 19.8, lon: 85.8, time: "CURRENT (984 hPa)" },
-  { lat: 21.5, lon: 84.9, time: "+24h Forecast" },
-  { lat: 23.0, lon: 84.2, time: "+48h Forecast" }
+  { lat: 21.5, lon: 84.9, time: "+24h Projected Path" },
+  { lat: 23.0, lon: 84.2, time: "+48h Projected Path" }
 ];
 
 const RADAR_STATIONS = [
@@ -105,7 +105,6 @@ export default function GISMap({ onSelectLocation, selectedLocation }) {
           const radarPast = data.radar?.past;
           if (radarPast && radarPast.length > 0) {
             const latest = radarPast[radarPast.length - 1];
-            // Format: {host}{path}/256/{z}/{x}/{y}/2/1_1.png (Color reflectivity)
             const tileUrl = `${host}${latest.path}/256/{z}/{x}/{y}/2/1_1.png`;
             setRadarTileUrl(tileUrl);
             const dateObj = new Date(latest.time * 1000);
@@ -173,7 +172,7 @@ export default function GISMap({ onSelectLocation, selectedLocation }) {
 
           <label className="flex items-center justify-between cursor-pointer text-slate-300 hover:text-white">
             <span className="flex items-center gap-1.5 font-medium">
-              <Wind size={14} className="text-red-400" /> Cyclone VAAYU Track
+              <Wind size={14} className="text-red-400" /> Deep Depression / Storm Track
             </span>
             <input
               type="checkbox"
@@ -276,7 +275,7 @@ export default function GISMap({ onSelectLocation, selectedLocation }) {
           />
         )}
 
-        {/* Active Cyclone Track and Projected Cone */}
+        {/* Active Storm Track and Projected Path */}
         {showCyclone && (
           <>
             <Polyline
@@ -291,7 +290,7 @@ export default function GISMap({ onSelectLocation, selectedLocation }) {
               >
                 <Popup>
                   <div className="p-1 space-y-1">
-                    <div className="font-bold text-red-400">Cyclone VAAYU Track Point</div>
+                    <div className="font-bold text-red-400">Deep Depression / Storm Track Point</div>
                     <div className="text-xs text-slate-300 font-semibold">Status: {pt.time}</div>
                     <div className="text-xs text-slate-400">Coordinates: {pt.lat}°N, {pt.lon}°E</div>
                   </div>

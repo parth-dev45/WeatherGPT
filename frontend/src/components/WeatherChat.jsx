@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { 
-  Send, Mic, MicOff, Volume2, VolumeX, Sparkles, AlertTriangle, 
-  Droplets, Wind, Compass, Sun, MapPin, CheckCircle2, ChevronRight, User, Bot, Radio
+  Send, Mic, MicOff, Volume2, VolumeX, Sparkles, 
+  MapPin, CheckCircle2, ChevronRight, User, Bot, Radio
 } from "lucide-react";
 import { speechEngine } from "../services/voice";
+import ModernWeatherCard from "./ModernWeatherCard";
 
 const PROMPT_CHIPS = [
   { text: "🌧️ Will it rain heavily in Mumbai tomorrow?", category: "Forecast" },
@@ -101,7 +102,7 @@ export default function WeatherChat({
 
               {/* Chat Bubble */}
               <div
-                className={`max-w-[85%] rounded-2xl p-4 transition-all ${
+                className={`max-w-[88%] rounded-2xl p-4 transition-all ${
                   isUser
                     ? "bg-gradient-to-r from-sky-600 via-blue-600 to-blue-700 text-white rounded-tr-none shadow-lg shadow-sky-600/20 border border-sky-400/30"
                     : "glass-card text-slate-100 rounded-tl-none border border-slate-700/80 bg-slate-900/80 shadow-xl"
@@ -141,62 +142,10 @@ export default function WeatherChat({
                   </ReactMarkdown>
                 </div>
 
-                {/* Structured Weather Telemetry Card */}
+                {/* Modern Weather Card (Matching the Reference UI) */}
                 {msg.weather && (
-                  <div className="mt-3.5 p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-3 shadow-inner">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div>
-                        <div className="flex items-center gap-1 text-xs text-sky-400 font-bold">
-                          <MapPin size={13} /> {msg.weather.location}, {msg.weather.state}
-                        </div>
-                        <div className="flex items-baseline gap-2 mt-0.5">
-                          <span className="text-3xl font-black text-white tracking-tight">
-                            {msg.weather.current_temp}°C
-                          </span>
-                          <span className="text-xs text-slate-400 font-medium">
-                            Feels like {msg.weather.feels_like}°C • {msg.weather.condition}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          AQI {msg.weather.aqi} • {msg.weather.aqi_status}
-                        </span>
-                        <div className="text-[10px] text-slate-500 font-mono mt-1">
-                          {msg.weather.nwp_model}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Metric Quick Gauges */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-850 text-center">
-                      <div className="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                          <Droplets size={11} className="text-sky-400" /> Humidity
-                        </div>
-                        <div className="text-xs font-bold text-white mt-0.5">{msg.weather.humidity}%</div>
-                      </div>
-                      <div className="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                          <Wind size={11} className="text-teal-400" /> Wind Speed
-                        </div>
-                        <div className="text-xs font-bold text-white mt-0.5">{msg.weather.wind_speed} km/h</div>
-                      </div>
-                      <div className="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                          <Sun size={11} className="text-amber-400" /> UV Index
-                        </div>
-                        <div className="text-xs font-bold text-white mt-0.5">{msg.weather.uv_index}</div>
-                      </div>
-                      <div className="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                          <Compass size={11} className="text-purple-400" /> Rain Prob
-                        </div>
-                        <div className="text-xs font-bold text-white mt-0.5">
-                          {msg.weather.hourly ? msg.weather.hourly[0]?.rain_prob : 10}%
-                        </div>
-                      </div>
-                    </div>
+                  <div className="mt-4">
+                    <ModernWeatherCard weather={msg.weather} />
                   </div>
                 )}
 
