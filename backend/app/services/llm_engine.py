@@ -9,123 +9,81 @@ from .marine_service import get_marine_advisory
 from .historical_service import get_climate_trend_data
 from ..schemas.models import WeatherQueryRequest, ChatResponse, WeatherData, CityComparisonData
 
-# Indic regional name transliteration mappings
+# Comprehensive Indic Multi-Script Transliteration mappings for all 8 Indian Languages
 INDIC_LOCATION_TRANSLITERATIONS = {
-    "पुणे": "Pune",
-    "मुंबई": "Mumbai",
-    "बम्बई": "Mumbai",
-    "दिल्ली": "Delhi",
-    "नई दिल्ली": "New Delhi",
-    "नागपूर": "Nagpur",
-    "नागपुर": "Nagpur",
-    "नाशिक": "Nashik",
-    "नासिक": "Nashik",
-    "सोलापूर": "Solapur",
-    "सोलापुर": "Solapur",
-    "कोल्हापूर": "Kolhapur",
-    "छत्रपती संभाजीनगर": "Aurangabad",
-    "संभाजीनगर": "Aurangabad",
-    "औरंगाबाद": "Aurangabad",
-    "जालना": "Jalna",
-    "लातूर": "Latur",
-    "लातुर": "Latur",
-    "सांगली": "Sangli",
-    "सातारा": "Satara",
-    "बारामती": "Baramati",
-    "बीड": "Beed",
-    "अमरावती": "Amravati",
-    "अकोला": "Akola",
-    "जळगाव": "Jalgaon",
-    "परभणी": "Parbhani",
-    "नांदेड": "Nanded",
-    "चंद्रपूर": "Chandrapur",
-    "रत्नागिरी": "Ratnagiri",
-    "सिंधुदुर्ग": "Sindhudurg",
-    "अलिबाग": "Alibag",
-    "ठाणे": "Thane",
-    "चेन्नई": "Chennai",
-    "कोलकाता": "Kolkata",
-    "कलकत्ता": "Kolkata",
-    "बेंगळुरू": "Bengaluru",
-    "बैंगलोर": "Bengaluru",
-    "बेंगलुरु": "Bengaluru",
-    "हैदराबाद": "Hyderabad",
-    "जयपूर": "Jaipur",
-    "जयपुर": "Jaipur",
-    "जोधपूर": "Jodhpur",
-    "उदयपूर": "Udaipur",
-    "अलवर": "Alwar",
-    "लखनौ": "Lucknow",
-    "लखनऊ": "Lucknow",
-    "पाटणा": "Patna",
-    "पटना": "Patna",
-    "भोपाळ": "Bhopal",
-    "भोपाल": "Bhopal",
-    "इंदौर": "Indore",
-    "ग्वालियर": "Gwalior",
-    "जबलपूर": "Jabalpur",
-    "उज्जैन": "Ujjain",
-    "चंदीगड": "Chandigarh",
-    "चंडीगढ़": "Chandigarh",
-    "लुधियाना": "Ludhiana",
-    "अमृतसर": "Amritsar",
-    "वाराणसी": "Varanasi",
-    "बनारस": "Varanasi",
-    "कानपूर": "Kanpur",
-    "कानपुर": "Kanpur",
-    "झांसी": "Jhansi",
-    "झांशी": "Jhansi",
-    "प्रयागराज": "Prayagraj",
-    "इलाहाबाद": "Prayagraj",
-    "अयोध्या": "Ayodhya",
-    "अहमदाबाद": "Ahmedabad",
-    "सूरत": "Surat",
-    "वडोदरा": "Vadodara",
-    "राजकोट": "Rajkot",
-    "गुवाहाटी": "Guwahati",
-    "कोची": "Kochi",
-    "कोचीन": "Kochi",
-    "कोझिकोड": "Kozhikode",
-    "तिरुवनंतपुरम": "Thiruvananthapuram",
-    "वायनाड": "Wayanad",
-    "विशाखापट्टनम": "Visakhapatnam",
-    "वाइजाग": "Visakhapatnam",
-    "विजयवाडा": "Vijayawada",
-    "तिरुपती": "Tirupati",
-    "वारंगल": "Warangal",
-    "पुरी": "Puri",
-    "भुवनेश्वर": "Bhubaneswar",
-    "कटक": "Cuttack",
-    "राउरकेला": "Rourkela",
-    "संबलपूर": "Sambalpur",
-    "श्रीनगर": "Srinagar",
-    "जम्मू": "Jammu",
-    "शिमला": "Shimla",
-    "मनाली": "Manali",
-    "धर्मशाला": "Dharamshala",
-    "देहरादून": "Dehradun",
-    "ऋषिकेश": "Rishikesh",
-    "हरिद्वार": "Haridwar",
-    "नैनीताल": "Nainital",
-    "रांची": "Ranchi",
-    "जमशेदपूर": "Jamshedpur",
-    "धनबाद": "Dhanbad",
-    "रायपूर": "Raipur",
-    "बिलासपुर": "Bilaspur",
-    "गोवा": "Panaji",
-    "पणजी": "Panaji",
-    "लेह": "Leh"
+    # 1. Hindi / Marathi / Sanskrit (Devanagari)
+    "पुणे": "Pune", "मुंबई": "Mumbai", "बम्बई": "Mumbai", "दिल्ली": "Delhi", "नई दिल्ली": "New Delhi",
+    "नागपूर": "Nagpur", "नागपुर": "Nagpur", "नाशिक": "Nashik", "नासिक": "Nashik", "सोलापूर": "Solapur",
+    "सोलापुर": "Solapur", "कोल्हापूर": "Kolhapur", "छत्रपती संभाजीनगर": "Aurangabad", "संभाजीनगर": "Aurangabad",
+    "औरंगाबाद": "Aurangabad", "जालना": "Jalna", "लातूर": "Latur", "लातुर": "Latur", "सांगली": "Sangli",
+    "सातारा": "Satara", "बारामती": "Baramati", "बीड": "Beed", "अमरावती": "Amravati", "अकोला": "Akola",
+    "जळगाव": "Jalgaon", "परभणी": "Parbhani", "नांदेड": "Nanded", "चंद्रपूर": "Chandrapur", "रत्नागिरी": "Ratnagiri",
+    "सिंधुदुर्ग": "Sindhudurg", "अलिबाग": "Alibag", "ठाणे": "Thane", "चेन्नई": "Chennai", "कोलकाता": "Kolkata",
+    "कलकत्ता": "Kolkata", "बेंगळुरू": "Bengaluru", "बैंगलोर": "Bengaluru", "बेंगलुरु": "Bengaluru",
+    "हैदराबाद": "Hyderabad", "जयपूर": "Jaipur", "जयपुर": "Jaipur", "जोधपूर": "Jodhpur", "उदयपूर": "Udaipur",
+    "अलवर": "Alwar", "लखनौ": "Lucknow", "लखनऊ": "Lucknow", "पाटणा": "Patna", "पटना": "Patna",
+    "भोपाळ": "Bhopal", "भोपाल": "Bhopal", "इंदौर": "Indore", "ग्वालियर": "Gwalior", "जबलपूर": "Jabalpur",
+    "उज्जैन": "Ujjain", "चंदीगड": "Chandigarh", "चंडीगढ़": "Chandigarh", "लुधियाना": "Ludhiana",
+    "अमृतसर": "Amritsar", "वाराणसी": "Varanasi", "बनारस": "Varanasi", "कानपूर": "Kanpur", "कानपुर": "Kanpur",
+    "झांसी": "Jhansi", "झांशी": "Jhansi", "प्रयागराज": "Prayagraj", "इलाहाबाद": "Prayagraj", "अयोध्या": "Ayodhya",
+    "अहमदाबाद": "Ahmedabad", "सूरत": "Surat", "वडोदरा": "Vadodara", "राजकोट": "Rajkot", "गुवाहाटी": "Guwahati",
+    "कोची": "Kochi", "कोचीन": "Kochi", "कोझिकोड": "Kozhikode", "तिरुवनंतपुरम": "Thiruvananthapuram",
+    "वायनाड": "Wayanad", "विशाखापट्टनम": "Visakhapatnam", "वाइजाग": "Visakhapatnam", "विजयवाडा": "Vijayawada",
+    "तिरुपती": "Tirupati", "वारंगल": "Warangal", "पुरी": "Puri", "भुवनेश्वर": "Bhubaneswar", "कटक": "Cuttack",
+    "राउरकेला": "Rourkela", "संबलपूर": "Sambalpur", "श्रीनगर": "Srinagar", "जम्मू": "Jammu", "शिमला": "Shimla",
+    "मनाली": "Manali", "धर्मशाला": "Dharamshala", "देहरादून": "Dehradun", "ऋषिकेश": "Rishikesh",
+    "हरिद्वार": "Haridwar", "नैनीताल": "Nainital", "रांची": "Ranchi", "जमशेदपूर": "Jamshedpur",
+    "धनबाद": "Dhanbad", "रायपूर": "Raipur", "बिलासपुर": "Bilaspur", "गोवा": "Panaji", "पणजी": "Panaji", "लेह": "Leh",
+
+    # 2. Tamil (தமிழ்)
+    "சென்னை": "Chennai", "சென்னையில்": "Chennai", "மதுரை": "Madurai", "கோயம்புத்தூர்": "Coimbatore", "கோவை": "Coimbatore",
+    "திருச்சி": "Tiruchirappalli", "திருச்சிராப்பள்ளி": "Tiruchirappalli", "சேலம்": "Salem",
+    "திருநெல்வேலி": "Tirunelveli", "ஈரோடு": "Erode", "வேலூர்": "Vellore", "கன்னியாகுமரி": "Kanyakumari",
+    "தஞ்சாவூர்": "Thanjavur", "திண்டுக்கல்": "Dindigul", "தூத்துக்குடி": "Thoothukudi", "திருப்பூர்": "Tiruppur",
+    "ராமேஸ்வரம்": "Rameshwaram", "புதுச்சேரி": "Puducherry", "காஞ்சிபுரம்": "Kanchipuram", "நாகர்கோவில்": "Nagercoil",
+
+    # 3. Telugu (తెలుగు)
+    "హైదరాబాద్": "Hyderabad", "హైదరాబాద్‌లో": "Hyderabad", "విశాఖపట్నం": "Visakhapatnam", "వైజాగ్": "Visakhapatnam", "విజయవాడ": "Vijayawada",
+    "తిరుపతి": "Tirupati", "వరంగల్": "Warangal", "గుంటూరు": "Guntur", "నెల్లూరు": "Nellore", "కర్నూలు": "Kurnool",
+    "రాజమండ్రి": "Rajahmundry", "కడప": "Kadapa", "కాకినాడ": "Kakinada", "నిజామాబాద్": "Nizamabad",
+    "కరీంనగర్": "Karimnagar", "అనంతపురం": "Anantapur", "ఖమ్మం": "Khammam",
+
+    # 4. Bengali (বাংলা)
+    "কলকাতা": "Kolkata", "কলকাতায়": "Kolkata", "হাওড়া": "Howrah", "শিলিগুড়ি": "Siliguri", "দুর্গাপুর": "Durgapur",
+    "আসানসোল": "Asansol", "বর্ধমান": "Bardhaman", "মেদিনীপুর": "Midnapore", "দার্জিলিং": "Darjeeling",
+    "মালদা": "Malda", "জলপাইগুড়ি": "Jalpaiguri", "খড়গপুর": "Kharagpur",
+
+    # 5. Gujarati (ગુજરાતી)
+    "અમદાવાદ": "Ahmedabad", "અમદાવાદમાં": "Ahmedabad", "સુરત": "Surat", "વડોદરા": "Vadodara", "રાજકોટ": "Rajkot", "ભાવનગર": "Bhavnagar",
+    "જામનગર": "Jamnagar", "જુનાગઢ": "Junagadh", "ગાંધીનગર": "Gandhinagar", "આણંદ": "Anand",
+    "નવસારી": "Navsari", "ભરૂચ": "Bharuch", "પોરબંદર": "Porbandar", "મોરબી": "Morbi", "ભુજ": "Bhuj",
+
+    # 6. Punjabi (ਪੰਜਾਬੀ)
+    "ਅੰਮ੍ਰਿਤਸਰ": "Amritsar", "ਲੁਧਿਆਣਾ": "Ludhiana", "ਜਲੰਧਰ": "Jalandhar", "ਪਟਿਆਲਾ": "Patiala",
+    "ਬਠਿੰਡਾ": "Bathinda", "ਮੋਹਾਲੀ": "Mohali", "ਚੰਡੀਗੜ੍ਹ": "Chandigarh", "ਹੁਸ਼ਿਆਰਪੁਰ": "Hoshiarpur",
+    "ਪਠਾਨਕੋਟ": "Pathankot", "ਫ਼ਿਰੋਜ਼ਪੁਰ": "Firozpur",
+
+    # 7. Kannada (ಕನ್ನಡ)
+    "ಬೆಂಗಳೂರು": "Bengaluru", "ಬೆಂಗಳೂರಿನಲ್ಲಿ": "Bengaluru", "ಮೈಸೂರು": "Mysuru", "ಮಂಗಳೂರು": "Mangaluru", "ಹುಬ್ಬಳ್ಳಿ": "Hubli",
+    "ಧಾರವಾಡ": "Dharwad", "ಬೆಳಗಾವಿ": "Belagavi", "ಕಲಬುರಗಿ": "Kalaburagi", "ಬಳ್ಳಾರಿ": "Ballari",
+    "ದಾವಣಗೆರೆ": "Davangere", "ಶಿವಮೊಗ್ಗ": "Shivamogga", "ವಿಜಯಪುರ": "Vijayapura", "ಉಡುಪಿ": "Udupi",
+    "ಬೀದರ್": "Bidar", "ಹಾಸನ": "Hassan", "ತುಮಕೂರು": "Tumakuru", "ಕೊಡಗು": "Coorg",
+
+    # 8. Malayalam (മലയാളം)
+    "തിരുവനന്തപുരം": "Thiruvananthapuram", "കൊച്ചി": "Kochi", "കോഴിക്കോട്": "Kozhikode",
+    "തൃശ്ശൂർ": "Thrissur", "കൊല്ലം": "Kollam", "കണ്ണൂർ": "Kannur", "ആലപ്പുഴ": "Alappuzha",
+    "പാലക്കാട്": "Palakkad", "കോട്ടയം": "Kottayam", "വയനാട്": "Wayanad", "മൂന്നാർ": "Munnar"
 }
 
 LANGUAGE_MAP = {
     "hi": ["मौसम", "बारिश", "तापमान", "हवा", "गर्मी", "फसल", "धान", "गेहूं", "अलर्ट", "बिजली", "आज", "कल", "होगा", "बताओ", "क्या"],
     "mr": ["हवामान", "पाऊस", "तापमान", "शेतकरी", "पीक", "कापूस", "सोयाबीन", "ऊन", "सांगा", "कसे", "आहे"],
-    "ta": ["வானிலை", "மழை", "வெப்பநிலை", "விவசாயம்", "காற்று", "புயல்", "இன்று", "நாளை"],
-    "te": ["వాతావరణం", "వర్షం", "ఉష్ణోగ్రత", "పంట", "రైతు", "గాలి", "హెచ్చరిక"],
-    "bn": ["আবহাওয়া", "বৃষ্টি", "তাপমাত্রা", "ঘূর্ণিঝড়", "আজ", "কাল", "কেমন"],
-    "gu": ["હવામાન", "વરસાદ", "તાપમાન", "ખેડૂત", "પાક", "આગાહી"],
-    "pa": ["ਮੌਸਮ", "ਮੀਂਹ", "ਤਾਪਮਾਨ", "ਕਣਕ", "ਝੋਨਾ", "ਕੱਲ੍ਹ"],
-    "kn": ["ಹವಾಮಾನ", "ಮಳೆ", "ತಾಪಮಾನ", "ಬೆಳೆ", "ರೈತ"]
+    "ta": ["வானிலை", "மழை", "வெப்பநிலை", "விவசாயம்", "காற்று", "புயல்", "இன்று", "நாளை", "பெய்யுமா"],
+    "te": ["వాతావరణం", "వర్షం", "ఉష్ణోగ్రత", "పంట", "రైతు", "గాలి", "హెచ్చరిక", "ఎలా"],
+    "bn": ["আবহাওয়া", "বৃষ্টি", "তাপমাত্রা", "ঘূর্ণিঝড়", "আজ", "কাল", "কেমন", "হবে"],
+    "gu": ["હવામાન", "વરસાદ", "તાપમાન", "ખેડૂત", "પાક", "આગાહી", "પડશે"],
+    "pa": ["ਮੌਸਮ", "ਮੀਂਹ", "ਤਾਪਮਾਨ", "ਕਣਕ", "ਝੋਨਾ", "ਕੱਲ੍ਹ", "ਕਿਵੇਂ"],
+    "kn": ["ಹವಾಮಾನ", "ಮಳೆ", "ತಾಪಮಾನ", "ಬೆಳೆ", "ರೈತ", "ಬರುತ್ತದೆಯೇ"]
 }
 
 def detect_language(text: str) -> str:
@@ -150,6 +108,8 @@ def detect_language(text: str) -> str:
             return "pa"
         elif 0x0C80 <= code <= 0x0CFF:
             return "kn"
+        elif 0x0D00 <= code <= 0x0D7F:
+            return "ml"
     return "en"
 
 STOPWORDS = {
@@ -159,24 +119,31 @@ STOPWORDS = {
     "and", "to", "tell", "me", "show", "give", "update", "condition", "status", 
     "kaisa", "hai", "hoga", "kya", "padega", "aaj", "kal", "ka", "ki", "ke", "liye",
     "crop", "agri", "farming", "cotton", "paddy", "wheat", "sugarcane", "pesticide",
-    "please", "can", "you", "check", "current", "live", "about", "details", "info"
+    "please", "can", "you", "check", "current", "live", "about", "details", "info",
+    "மழை", "வானிலை", "பெய்யுமா", "இன்று", "நாளை",
+    "వర్షం", "వాతావరణం", "ఎలా", "ఉంది", "రేపు",
+    "বৃষ্টি", "আবহাওয়া", "হবে", "কি", "আজ", "কাল",
+    "વરસાદ", "હવામાન", "પડશે", "આજે", "કાલે",
+    "ਮੀਂਹ", "ਮੌਸਮ", "ਕਿਵੇਂ", "ਹੈ", "ਅੱਜ", "ਕੱਲ੍ਹ",
+    "ಮಳೆ", "ಹವಾಮಾನ", "ಬರುತ್ತದೆಯೇ", "ಇಂದು", "ನಾಳೆ"
 }
 
 def extract_location_from_query(text: str, fallback_loc: Optional[str] = None) -> str:
-    """Extracts location with multi-stage entity resolution."""
+    """Extracts location with multi-stage entity resolution across all Indian language scripts."""
     lowered = text.lower()
     
-    # 1. Match against known 250+ Indian cities and districts
+    # 1. Match against known 250+ Indian cities and districts (English)
     sorted_cities = sorted(INDIAN_LOCATIONS.keys(), key=len, reverse=True)
     for city_key in sorted_cities:
         pattern = r'\b' + re.escape(city_key) + r'\b'
         if re.search(pattern, lowered):
             return city_key.title()
 
-    # 2. Check Indic Devanagari / Regional words
-    for indic_name, eng_city in INDIC_LOCATION_TRANSLITERATIONS.items():
+    # 2. Check Indic Multi-Script Dictionary (Tamil, Telugu, Bengali, Gujarati, Punjabi, Kannada, Marathi, Hindi)
+    sorted_indic = sorted(INDIC_LOCATION_TRANSLITERATIONS.keys(), key=len, reverse=True)
+    for indic_name in sorted_indic:
         if indic_name in text:
-            return eng_city
+            return INDIC_LOCATION_TRANSLITERATIONS[indic_name]
 
     # 3. Regex extraction: 'in <City>', 'at <City>', 'near <City>', 'for <City>'
     match = re.search(r'\b(?:in|at|near|for|around|over|of)\s+([A-Za-z]+)', text, re.IGNORECASE)
@@ -185,11 +152,16 @@ def extract_location_from_query(text: str, fallback_loc: Optional[str] = None) -
         if cand.lower() not in STOPWORDS and len(cand) >= 3:
             return cand.title()
 
-    # 4. Tokenize and test isolated candidate words
-    clean_tokens = re.findall(r'\b[A-Za-z]{3,}\b', text)
-    candidate_tokens = [w for w in clean_tokens if w.lower() not in STOPWORDS]
+    # 4. Tokenize Unicode words (including all Indic regional scripts)
+    unicode_tokens = re.findall(r'[\w\u0900-\u0DFF]{3,}', text)
+    candidate_tokens = [w for w in unicode_tokens if w.lower() not in STOPWORDS]
     if candidate_tokens:
-        return candidate_tokens[0].title()
+        # Check if first candidate token is a known regional city
+        for tok in candidate_tokens:
+            for indic_name in sorted_indic:
+                if indic_name in tok:
+                    return INDIC_LOCATION_TRANSLITERATIONS[indic_name]
+        return candidate_tokens[0]
 
     # 5. Fallback context
     if fallback_loc and fallback_loc.strip() and fallback_loc.lower() not in ["your location", "auto", ""]:
@@ -251,7 +223,11 @@ def extract_two_locations(text: str) -> Tuple[str, str]:
 def process_conversational_query(req: WeatherQueryRequest) -> ChatResponse:
     """Main LLM Tool Calling and Query Processing Engine with Multilingual Generation."""
     query = req.query.strip()
-    lang = req.language if req.language and req.language != "auto" else detect_language(query)
+    detected = detect_language(query)
+    if detected != "en":
+        lang = detected
+    else:
+        lang = req.language if req.language and req.language != "auto" else "en"
     persona = req.persona or "general"
     q_low = query.lower()
 
