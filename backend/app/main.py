@@ -6,7 +6,10 @@ from .schemas.models import (
     WeatherQueryRequest, ChatResponse, WeatherData, CAPAlert,
     AgriCropAdvisory, AviationBriefing, MarineAdvisory, CityComparisonData
 )
-from .services.weather_service import geocode_location, fetch_weather_data, compare_locations
+from .services.weather_service import (
+    geocode_location, fetch_weather_data, compare_locations, 
+    search_locations_autocomplete, REGIONAL_TALUKA_EXPLORER
+)
 from .services.alert_service import get_active_alerts, get_cyclone_track_geojson
 from .services.agri_advisory import generate_crop_advisory, CROP_DATABASE
 from .services.aviation_service import get_aviation_briefing
@@ -46,13 +49,27 @@ def handle_chat_query(req: WeatherQueryRequest):
     """Processes natural language weather queries in English & Indian languages."""
     return process_conversational_query(req)
 
+@app.get("/api/locations/search")
+def search_locations(
+    q: str = Query(..., description="Query text for city, taluka, tehsil, or micro-locality"),
+    limit: int = Query(8, description="Maximum number of suggestions")
+):
+    """Returns instant autocomplete suggestions across 450+ Indian talukas, districts, and towns."""
+    return search_locations_autocomplete(q, limit)
+
+@app.get("/api/locations/regional-explorer")
+def get_regional_talukas(region: str = Query("pune", description="Region or city name")):
+    """Returns list of popular sub-areas / talukas for the given metro/district."""
+    reg = region.lower().strip()
+    return REGIONAL_TALUKA_EXPLORER.get(reg, REGIONAL_TALUKA_EXPLORER.get("pune", []))
+
 @app.get("/api/weather/current", response_model=WeatherData)
 def get_current_weather(
-    location: str = Query("New Delhi", description="City or district name"),
+    location: str = Query("Pune", description="City, taluka, or district name"),
     lat: Optional[float] = None,
     lon: Optional[float] = None
 ):
-    """Retrieves real-time telemetry, 7-day hourly & daily NWP forecast."""
+    """Retrieves real-time telemetry, 24-hour future hourly & 7-day NWP forecast."""
     if lat is None or lon is None:
         lat, lon, proper_name, state_name = geocode_location(location)
     else:

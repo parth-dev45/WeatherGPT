@@ -134,11 +134,19 @@ export default function ModernWeatherCard({ weather }) {
           </div>
 
           {/* Rain Prob */}
-          <div className="bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/50 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition">
+          <div className={`border backdrop-blur-md rounded-2xl p-3 sm:p-3.5 flex items-center gap-3 transition ${
+            rainProb >= 60 
+              ? "bg-blue-900/40 border-sky-400/60 shadow-sm" 
+              : "bg-slate-800/40 hover:bg-slate-800/60 border-slate-700/50"
+          }`}>
             <span className="text-xl">🌧️</span>
             <div>
-              <div className="text-[11px] text-slate-400 font-medium">Rain Prob.</div>
-              <div className="text-sm font-bold text-white mt-0.5">{rainProb}%</div>
+              <div className="text-[11px] text-slate-400 font-medium">
+                {weather.precipitation > 0 ? `Rain (${weather.precipitation} mm)` : "Rain Prob."}
+              </div>
+              <div className={`text-sm font-bold mt-0.5 ${rainProb >= 60 ? "text-sky-300" : "text-white"}`}>
+                {rainProb}%
+              </div>
             </div>
           </div>
         </div>

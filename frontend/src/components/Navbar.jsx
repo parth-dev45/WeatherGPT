@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   CloudSun, ShieldAlert, Sparkles, Navigation, Globe, UserCheck, 
-  Search, Radio, Sprout, Plane, Waves, AlertTriangle, TrendingUp, LayoutGrid, Scale 
+  Search, Radio, Sprout, Plane, Waves, AlertTriangle, TrendingUp, LayoutGrid, Scale,
+  MapPin, ChevronRight, Loader2
 } from "lucide-react";
+import { searchLocations } from "../services/api";
 
 const PERSONAS = [
   { id: "general", label: "Public", icon: "🌐", desc: "Daily Forecasts & Alerts" },
@@ -39,6 +41,76 @@ export default function Navbar({
   activeTab,
   setActiveTab
 }) {
+  const [suggestions, setSuggestions] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const searchContainerRef = useRef(null);
+
+  // Debounced search for suggestions as user types
+  useEffect(() => {
+    if (!searchLocation || searchLocation.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const results = await searchLocations(searchLocation.trim(), 7);
+        setSuggestions(results);
+      } catch (e) {
+        console.warn("Autocomplete error:", e);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 220);
+
+    return () => clearTimeout(timer);
+  }, [searchLocation]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelectLocation = (locName) => {
+    setSearchLocation(locName);
+    setIsOpen(false);
+    setSuggestions([]);
+    if (onSearchSubmit) {
+      // Small timeout to let state update
+      setTimeout(() => {
+        onSearchSubmit();
+      }, 50);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (!isOpen || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === "Enter") {
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        e.preventDefault();
+        handleSelectLocation(suggestions[selectedIndex].name);
+      }
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 glass-panel">
       {/* Top Emergency Marquee Ticker */}
@@ -66,7 +138,7 @@ export default function Navbar({
               ))
             ) : (
               <span>
-                📡 <span className="font-bold text-emerald-300">[LIVE TELEMETRY]</span> Real-time hazard monitoring active across all Indian meteorological observation stations • GFS/WRF model ensemble operational.
+                📡 <span className="font-bold text-emerald-300">[LIVE TELEMETRY]</span> Real-time hazard & 24h convective rain monitoring active across 450+ Indian talukas, districts & metropolises • IMD ensemble operational.
               </span>
             )}
           </div>
@@ -99,41 +171,104 @@ export default function Navbar({
                 MoES • IMD
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium">Conversational AI & Early Warning Hub</p>
+            <p className="text-[10px] text-slate-400 font-medium">Conversational AI, Talukas & Early Warning Hub</p>
           </div>
         </div>
 
-        {/* Global Search Bar */}
-        <form onSubmit={onSearchSubmit} className="flex-1 max-w-md mx-2 min-w-[240px]">
-          <div className="relative flex items-center">
-            <Search size={15} className="absolute left-3 text-slate-400" />
-            <input
-              type="text"
-              value={searchLocation}
-              onChange={(e) => setSearchLocation(e.target.value)}
-              placeholder="Search 250+ Indian cities, districts or tehsils..."
-              className="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 rounded-xl py-1.5 pl-9 pr-20 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner"
-            />
-            <div className="absolute right-1 flex items-center gap-1">
-              <button
-                type="button"
-                onClick={onDetectLocation}
-                title="Auto-detect GPS Location"
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-sky-400 transition"
-              >
-                <Navigation size={13} />
-              </button>
-              <button
-                type="submit"
-                className="bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition"
-              >
-                Go
-              </button>
+        {/* Global Search Bar with Live Autocomplete */}
+        <div ref={searchContainerRef} className="flex-1 max-w-md mx-2 min-w-[260px] relative">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIsOpen(false);
+              onSearchSubmit(e);
+            }} 
+            className="w-full"
+          >
+            <div className="relative flex items-center">
+              {isSearching ? (
+                <Loader2 size={15} className="absolute left-3 text-sky-400 animate-spin" />
+              ) : (
+                <Search size={15} className="absolute left-3 text-slate-400" />
+              )}
+              <input
+                type="text"
+                value={searchLocation}
+                onChange={(e) => {
+                  setSearchLocation(e.target.value);
+                  setIsOpen(true);
+                  setSelectedIndex(-1);
+                }}
+                onFocus={() => {
+                  if (suggestions.length > 0) setIsOpen(true);
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="Search 450+ Indian talukas, areas (e.g. Wagholi, Hinjawadi)..."
+                className="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 rounded-xl py-1.5 pl-9 pr-20 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition shadow-inner"
+              />
+              <div className="absolute right-1 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={onDetectLocation}
+                  title="Auto-detect GPS Location"
+                  className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-sky-400 transition"
+                >
+                  <Navigation size={13} />
+                </button>
+                <button
+                  type="submit"
+                  className="bg-sky-600 hover:bg-sky-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition shadow-sm"
+                >
+                  Go
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
 
-        {/* Language & Action Controls */}
+          {/* Autocomplete Suggestions Dropdown */}
+          {isOpen && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1.5 bg-slate-900/95 border border-slate-700/90 rounded-2xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-fadeIn">
+              <div className="p-1.5 max-h-72 overflow-y-auto no-scrollbar space-y-1">
+                <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800/80">
+                  <span>Locations & Talukas ({suggestions.length})</span>
+                  <span className="text-sky-400 font-normal">Click or press Enter</span>
+                </div>
+                {suggestions.map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => handleSelectLocation(item.name)}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                    className={`flex items-center justify-between p-2 rounded-xl cursor-pointer transition ${
+                      selectedIndex === idx
+                        ? "bg-sky-600/30 text-white border border-sky-500/40"
+                        : "hover:bg-slate-800/60 text-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 overflow-hidden">
+                      <div className="w-6 h-6 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0">
+                        <MapPin size={12} />
+                      </div>
+                      <div className="truncate">
+                        <div className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
+                          <span>{item.name}</span>
+                          {item.region && (
+                            <span className="text-[10px] font-normal px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700/60">
+                              {item.region}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">{item.state}</div>
+                      </div>
+                    </div>
+                    <ChevronRight size={12} className="text-slate-500 flex-shrink-0" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Language Controls */}
         <div className="flex items-center gap-2">
           <div className="relative flex items-center">
             <select
@@ -194,6 +329,18 @@ export default function Navbar({
             </button>
 
             <button
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                activeTab === "dashboard"
+                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              }`}
+            >
+              <span>📊</span>
+              <span>24h Forecast Matrix</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab("map")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
                 activeTab === "map"
@@ -203,18 +350,6 @@ export default function Navbar({
             >
               <span>🗺️</span>
               <span>GIS Radar Map</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("dashboard")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
-                activeTab === "dashboard"
-                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
-              }`}
-            >
-              <span>📊</span>
-              <span>Forecast Matrix</span>
             </button>
 
             <button

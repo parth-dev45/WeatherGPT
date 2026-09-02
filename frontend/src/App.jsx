@@ -49,6 +49,39 @@ const WELCOME_GREETINGS = {
   }
 };
 
+const WELCOME_ACTIONS_BY_LANG = {
+  mr: [
+    { label: "GIS रडार नकाशा पहा", action: "open_map" },
+    { label: "7-दिवसीय सविस्तर अंदाज", action: "open_dashboard" },
+    { label: "शेतकरी मेघदूत कृषी सल्ला", action: "open_agri" },
+    { label: "आपत्ती इशारे केंद्र", action: "open_alerts" }
+  ],
+  hi: [
+    { label: "डॉपलर रडार मैप देखें", action: "open_map" },
+    { label: "7-दिवसीय पूर्वानुमान", action: "open_dashboard" },
+    { label: "मेघदूत किसान सलाह", action: "open_agri" },
+    { label: "आपदा अलर्ट केंद्र", action: "open_alerts" }
+  ],
+  ta: [
+    { label: "ரேடார் வரைபடம்", action: "open_map" },
+    { label: "7-நாள் அறிக்கை", action: "open_dashboard" },
+    { label: "விவசாய ஆலோசனை", action: "open_agri" },
+    { label: "பேரிடர் மையம்", action: "open_alerts" }
+  ],
+  te: [
+    { label: "రాడార్ మ్యాప్", action: "open_map" },
+    { label: "7 రోజుల సూచన", action: "open_dashboard" },
+    { label: "రైతు సలహాలు", action: "open_agri" },
+    { label: "హెచ్చరికల కేంద్రం", action: "open_alerts"}
+  ],
+  en: [
+    { label: "View Doppler Radar Map", action: "open_map" },
+    { label: "7-Day Forecast Matrix", action: "open_dashboard" },
+    { label: "Farmers Agromet Advisory", action: "open_agri" },
+    { label: "Active CAP Disaster Alerts", action: "open_alerts" }
+  ]
+};
+
 export default function App() {
   const [currentPersona, setPersona] = useState("general");
   const [currentLanguage, setLanguage] = useState("auto");
@@ -65,12 +98,7 @@ export default function App() {
       sender: "bot",
       text: WELCOME_GREETINGS.en.text,
       speech_text: WELCOME_GREETINGS.en.speech,
-      suggested_actions: [
-        { label: "View Doppler Radar Map", action: "open_map" },
-        { label: "7-Day Forecast Matrix", action: "open_dashboard" },
-        { label: "Farmers Agromet Advisory", action: "open_agri" },
-        { label: "Active CAP Disaster Alerts", action: "open_alerts" }
-      ]
+      suggested_actions: WELCOME_ACTIONS_BY_LANG.en
     }
   ]);
 
@@ -78,18 +106,14 @@ export default function App() {
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
     const greeting = WELCOME_GREETINGS[newLang] || WELCOME_GREETINGS.en;
+    const actions = WELCOME_ACTIONS_BY_LANG[newLang] || WELCOME_ACTIONS_BY_LANG.en;
     setMessages([
       {
         id: `lang-switch-${Date.now()}`,
         sender: "bot",
         text: greeting.text,
         speech_text: greeting.speech,
-        suggested_actions: [
-          { label: "View Doppler Radar Map", action: "open_map" },
-          { label: "7-Day Forecast Matrix", action: "open_dashboard" },
-          { label: "Farmers Agromet Advisory", action: "open_agri" },
-          { label: "Active CAP Disaster Alerts", action: "open_alerts" }
-        ]
+        suggested_actions: actions
       }
     ]);
   };
@@ -150,8 +174,12 @@ export default function App() {
         {
           id: `err-${Date.now()}`,
           sender: "bot",
-          text: "⚠️ **Communication Anomaly**: Could not connect to the WeatherGPT forecasting cluster. Please ensure the backend server is running and try again.",
-          speech_text: "Could not connect to the weather forecasting cluster. Please try again."
+          text: currentLanguage === "mr"
+            ? "⚠️ **संपर्क त्रुटी**: हवामान प्रणालीशी संपर्क होऊ शकला नाही. कृपया सर्व्हर सुरू असल्याची खात्री करा."
+            : "⚠️ **Communication Anomaly**: Could not connect to the WeatherGPT forecasting cluster. Please ensure the backend server is running and try again.",
+          speech_text: currentLanguage === "mr" 
+            ? "हवामान प्रणालीशी संपर्क होऊ शकला नाही. कृपया पुन्हा प्रयत्न करा."
+            : "Could not connect to the weather forecasting cluster. Please try again."
         }
       ]);
     } finally {
@@ -168,7 +196,15 @@ export default function App() {
     try {
       const data = await fetchCurrentWeather(searchLocation.trim());
       setWeatherData(data);
-      handleSendMessage(`Give me a complete weather intelligence and hazard summary for ${searchLocation.trim()}`);
+      
+      let promptText = `Give me a complete weather intelligence and hazard summary for ${searchLocation.trim()}`;
+      if (currentLanguage === "mr") {
+        promptText = `${searchLocation.trim()} चे हवामान आणि आपत्ती अंदाज द्या`;
+      } else if (currentLanguage === "hi") {
+        promptText = `${searchLocation.trim()} का मौसम पूर्वानुमान और आपदा अलर्ट बताएं`;
+      }
+      
+      handleSendMessage(promptText);
     } catch (err) {
       console.error(err);
     } finally {

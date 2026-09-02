@@ -71,3 +71,17 @@ export async function fetchCityComparison(city1 = "Mumbai", city2 = "Delhi") {
   if (!res.ok) throw new Error("Failed to fetch city comparison");
   return await res.json();
 }
+
+export async function searchLocations(query = "", limit = 8) {
+  if (!query || query.trim().length < 1) return [];
+  const res = await fetch(`${API_BASE_URL}/locations/search?q=${encodeURIComponent(query.trim())}&limit=${limit}`);
+  if (!res.ok) return [];
+  return await res.json();
+}
+
+export async function fetchRegionalTalukas(region = "pune") {
+  const res = await fetch(`${API_BASE_URL}/locations/regional-explorer?region=${encodeURIComponent(region)}`);
+  if (!res.ok) return [];
+  return await res.json();
+}
+

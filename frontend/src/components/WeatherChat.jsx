@@ -8,14 +8,57 @@ import {
 import { speechEngine } from "../services/voice";
 import ModernWeatherCard from "./ModernWeatherCard";
 
-const PROMPT_CHIPS = [
-  { text: "🌧️ Will it rain heavily in Mumbai tomorrow?", category: "Forecast" },
-  { text: "🌾 Cotton crop spray advisory for Nagpur district", category: "Agromet" },
-  { text: "🚨 Active cyclone track & landfall forecast for Odisha", category: "Disaster" },
-  { text: "✈️ METAR & TAF weather briefing for Delhi VIDP", category: "Aviation" },
-  { text: "⚓ Ocean wave height & fisherman warning for Kochi", category: "Marine" },
-  { text: "📈 Compare this year's monsoon vs 30-year IMD average", category: "Climate" }
-];
+const PROMPT_CHIPS_BY_LANG = {
+  mr: [
+    { text: "🌧️ मुंबईमध्ये उद्या मुसळधार पाऊस पडेल का?", category: "हवामान" },
+    { text: "🌾 नागपूर जिल्ह्यासाठी कापूस पीक फवारणी सल्ला", category: "मेघदूत" },
+    { text: "🚨 ओडिशासाठी सक्रिय चक्रीवादळ मार्ग व अंदाज", category: "आपत्ती" },
+    { text: "✈️ दिल्ली VIDP विमानतळ METAR हवामान माहिती", category: "विमानन" },
+    { text: "⚓ कोचीसाठी सागरी लाटांची उंची आणि मच्छीमार इशारा", category: "सागरी" },
+    { text: "📈 यंदाचा मान्सून आणि 30 वर्षांची IMD सरासरी तुलना", category: "हवामान बदल" }
+  ],
+  hi: [
+    { text: "🌧️ क्या कल मुंबई में भारी बारिश होगी?", category: "पूर्वानुमान" },
+    { text: "🌾 नागपुर जिले के लिए कपास फसल कीटनाशक सलाह", category: "कृषि" },
+    { text: "🚨 ओडिशा के लिए सक्रिय चक्रवात ट्रैक और लैंडफॉल पूर्वानुमान", category: "आपदा" },
+    { text: "✈️ दिल्ली VIDP हवाई अड्डे के लिए METAR और TAF मौसम ब्रीफिंग", category: "विमानन" },
+    { text: "⚓ कोच्चि के लिए समुद्री लहरों की ऊंचाई और मछुआरों के लिए चेतावनी", category: "समुद्री" },
+    { text: "📈 इस साल के मानसून की 30 साल के औसत से तुलना", category: "जलवायु" }
+  ],
+  ta: [
+    { text: "🌧️ நாளை சென்னையில் கனமழை பெய்யுமா?", category: "முன்னறிவிப்பு" },
+    { text: "🌾 பருத்தி பயிர் பூச்சிக்கொல்லி ஆலோசனை", category: "விவசாயம்" },
+    { text: "🚨 ஒடிசா தீவிர புயல் பாதை மற்றும் எச்சரிக்கை", category: "பேரிடர்" },
+    { text: "✈️ டெல்லி விமான நிலைய METAR வானிலை அறிக்கை", category: "விமானம்" },
+    { text: "⚓ கொச்சி கடல் அலை உயரம் மற்றும் மீனவர் எச்சரிக்கை", category: "கடல்" }
+  ],
+  te: [
+    { text: "🌧️ రేపు ముంబైలో భారీ వర్షం పడుతుందా?", category: "సూచన" },
+    { text: "🌾 పత్తి పంట పురుగుమందుల సలహా", category: "వ్యవసాయం" },
+    { text: "🚨 ఒడిశా తీవ్ర తుఫాను హెచ్చరిక", category: "విపత్తు" },
+    { text: "✈️ ఢిల్లీ విమానాశ్రయం METAR వాతావరణం", category: "విమానయానం" }
+  ],
+  en: [
+    { text: "🌧️ Will it rain heavily in Mumbai tomorrow?", category: "Forecast" },
+    { text: "🌾 Cotton crop spray advisory for Nagpur district", category: "Agromet" },
+    { text: "🚨 Active cyclone track & landfall forecast for Odisha", category: "Disaster" },
+    { text: "✈️ METAR & TAF weather briefing for Delhi VIDP", category: "Aviation" },
+    { text: "⚓ Ocean wave height & fisherman warning for Kochi", category: "Marine" },
+    { text: "📈 Compare this year's monsoon vs 30-year IMD average", category: "Climate" }
+  ]
+};
+
+const PLACEHOLDERS_BY_LANG = {
+  mr: "हवामान अंदाज, शेतकरी पीक सल्ला किंवा आपत्ती इशारे विचारा (मराठी, हिन्दी, English...)...",
+  hi: "मौसम पूर्वानुमान, फसल सलाह या आपदा अलर्ट पूछें (हिन्दी, मराठी, English...)...",
+  ta: "வானிலை முன்னறிவிப்பு, விவசாய ஆலோசனை அல்லது பேரிடர் எச்சரிக்கைகளைக் கேளுங்கள்...",
+  te: "వాతావరణ సూచనలు, పంట సలహాలు లేదా విపత్తు హెచ్చరికలను అడగండి...",
+  bn: "আবহাওয়ার পূর্বাভাস, ফসলের পরামর্শ বা দুর্যোগ সতর্কতা জিজ্ঞাসা করুন...",
+  gu: "હવામાન આગાહી, પાક સલાહ અથવા આપત્તિ ચેતવણી પૂછો...",
+  pa: "ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ, ਖੇਤੀ ਸਲਾਹ ਜਾਂ ਆਫ਼ਤ ਚੇਤਾਵਨੀਆਂ ਬਾਰੇ ਪੁੱਛੋ...",
+  kn: "ಹವಾಮಾನ ಮುನ್ಸೂಚನೆ, ಬೆಳೆ ಸಲಹೆ ಅಥವಾ ವಿಪತ್ತು ಎಚ್ಚರಿಕೆಗಳನ್ನು ಕೇಳಿ...",
+  en: "Ask weather forecasts, crop advisories, or disaster alerts in Hindi, Marathi, Tamil, English..."
+};
 
 export default function WeatherChat({
   messages,
@@ -182,7 +225,7 @@ export default function WeatherChat({
 
       {/* Quick Prompt Chips */}
       <div className="py-2 overflow-x-auto no-scrollbar flex gap-2">
-        {PROMPT_CHIPS.map((chip, i) => (
+        {(PROMPT_CHIPS_BY_LANG[currentLanguage] || PROMPT_CHIPS_BY_LANG.en).map((chip, i) => (
           <button
             key={i}
             onClick={() => onSendMessage(chip.text)}
@@ -202,8 +245,8 @@ export default function WeatherChat({
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
               isRecording
-                ? "🎙️ Listening in Indic voice mode... Speak clearly now"
-                : "Ask weather forecasts, crop advisories, or disaster alerts in Hindi, Marathi, Tamil, English..."
+                ? (currentLanguage === "mr" ? "🎙️ मराठी व्हॉइस मोड सुरू आहे... बोला" : "🎙️ Listening in Indic voice mode... Speak clearly now")
+                : (PLACEHOLDERS_BY_LANG[currentLanguage] || PLACEHOLDERS_BY_LANG.en)
             }
             className={`w-full bg-slate-900/95 border ${
               isRecording 
