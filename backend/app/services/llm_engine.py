@@ -120,9 +120,31 @@ INDIC_LOCATION_TRANSLITERATIONS = {
     "ಬೀದರ್": "Bidar", "ಹಾಸನ": "Hassan", "ತುಮಕೂರು": "Tumakuru", "ಕೊಡಗು": "Coorg",
 
     # 8. Malayalam (മലയാളം)
-    "തിരുവനന്തപുരം": "Thiruvananthapuram", "കൊച്ചി": "Kochi", "കോഴിക്കോട്": "Kozhikode",
-    "തൃശ്ശൂർ": "Thrissur", "കൊല്ലം": "Kollam", "കണ്ണൂർ": "Kannur", "ആലപ്പുഴ": "Alappuzha",
-    "പാലക്കാട്": "Palakkad", "കോട്ടയം": "Kottayam", "വയനാട്": "Wayanad", "മൂന്നാർ": "Munnar"
+    "തിരുവനന്തപുരം": "Thiruvananthapuram", "തിരുവനന്തപുരത്ത്": "Thiruvananthapuram", "തിരുവനന്തപുരത്ത്": "Thiruvananthapuram",
+    "കൊച്ചി": "Kochi", "കൊച്ചിയിൽ": "Kochi",
+    "കോഴിക്കോട്": "Kozhikode", "കോഴിക്കോട്ട്": "Kozhikode",
+    "തൃശ്ശൂർ": "Thrissur", "തൃശ്ശൂരിൽ": "Thrissur",
+    "കൊല്ലം": "Kollam", "കൊല്ലത്ത്": "Kollam",
+    "കണ്ണൂർ": "Kannur", "കണ്ണൂരിൽ": "Kannur",
+    "ആലപ്പുഴ": "Alappuzha", "ആലപ്പുഴയിൽ": "Alappuzha",
+    "പാലക്കാട്": "Palakkad", "പാലക്കാട്ട്": "Palakkad",
+    "കോട്ടയം": "Kottayam", "കോട്ടയത്ത്": "Kottayam",
+    "വയനാട്": "Wayanad", "വയനാട്ടിൽ": "Wayanad",
+    "മൂന്നാർ": "Munnar", "മൂന്നാറിൽ": "Munnar",
+    "മലപ്പുറം": "Malappuram", "ഇടുക്കി": "Idukki", "ഇടുക്കിയിൽ": "Idukki", "കാസർഗോഡ്": "Kasaragod",
+
+    # 9. Odia (ଓଡ଼ିଆ)
+    "ଭୁବନେଶ୍ୱର": "Bhubaneswar", "ଭୁବନେଶ୍ବର": "Bhubaneswar", "ଭୁବନେଶ୍ୱରରେ": "Bhubaneswar", "ଭୁବନେଶ୍ବରରେ": "Bhubaneswar",
+    "କଟକ": "Cuttack", "କଟକରେ": "Cuttack",
+    "ପୁରୀ": "Puri", "ପୁରୀରେ": "Puri",
+    "ରାଉରକେଲା": "Rourkela", "ରାଉରକେଲାରେ": "Rourkela",
+    "ସମ୍ବଲପୁର": "Sambalpur", "ସମ୍ବଲପୁରରେ": "Sambalpur",
+    "ବାଲେଶ୍ୱର": "Balasore", "ବାଲେଶ୍ବର": "Balasore", "ବାଲେଶ୍ୱରରେ": "Balasore",
+    "ବ୍ରହ୍ମପୁର": "Berhampur", "ବ୍ରହ୍ମପୁରରେ": "Berhampur",
+    "ଭଦ୍ରକ": "Bhadrak", "ଭଦ୍ରକରେ": "Bhadrak",
+    "ଅନୁଗୋଳ": "Angul", "ବାରିପଦା": "Baripada",
+    "ଝାରସୁଗୁଡ଼ା": "Jharsuguda", "ପାରାଦ୍ୱୀପ": "Paradip", "ପାରାଦ୍ବୀପ": "Paradip", "ପାରାଦ୍ୱୀପରେ": "Paradip",
+    "କେନ୍ଦୁଝର": "Keonjhar", "କୋରାପୁଟ": "Koraput"
 }
 
 # Regional translations for weather conditions across Indian languages
@@ -172,6 +194,26 @@ WEATHER_CONDITION_TRANSLATIONS = {
         "Light Rain": "తేలికపాటి వర్షం (Light Rain)",
         "Heavy Rain": "భారీ వర్షం (Heavy Rain)",
         "Thunderstorm": "ఉరుములతో కూడిన వర్షం (Thunderstorm)"
+    },
+    "ml": {
+        "Clear Sky": "തെളിഞ്ഞ ആകാശം (Clear Sky)",
+        "Mainly Clear": "പ്രധാനമായും തെളിഞ്ഞത് (Mainly Clear)",
+        "Partly Cloudy": "ഭാഗികമായി മേഘാവൃതം (Partly Cloudy)",
+        "Overcast": "പൂർണ്ണമായി മേഘാവൃതം (Overcast)",
+        "Light Rain": "നേരിയ മഴ (Light Rain)",
+        "Moderate Rain": "മിതമായ മഴ (Moderate Rain)",
+        "Heavy Rain": "കനത്ത മഴ (Heavy Rain)",
+        "Thunderstorm": "ഇടിമിന്നലോട് കൂടിയ മഴ (Thunderstorm)"
+    },
+    "or": {
+        "Clear Sky": "ପରିଷ୍କାର ଆକାଶ (Clear Sky)",
+        "Mainly Clear": "ମୁଖ୍ୟତଃ ପରିଷ୍କାର (Mainly Clear)",
+        "Partly Cloudy": "ଆଂଶିକ ମେଘୁଆ (Partly Cloudy)",
+        "Overcast": "ପୂର୍ଣ୍ଣ ମେଘାଚ୍ଛନ୍ନ (Overcast)",
+        "Light Rain": "ହାଲୁକା ବର୍ଷା (Light Rain)",
+        "Moderate Rain": "ମଧ୍ୟମ ବର୍ଷା (Moderate Rain)",
+        "Heavy Rain": "ପ୍ରବଳ ବର୍ଷା (Heavy Rain)",
+        "Thunderstorm": "ବଜ୍ରପାତ ସହ ବର୍ଷା (Thunderstorm)"
     }
 }
 
@@ -207,6 +249,22 @@ AQI_STATUS_TRANSLATIONS = {
         "Poor": "పేలవమైనది (Poor)",
         "Very Poor": "చాలా పేలవం (Very Poor)",
         "Severe": "తీవ్రమైనది (Severe)"
+    },
+    "ml": {
+        "Good": "നല്ലത് (Good)",
+        "Satisfactory": "തൃപ്തികരം (Satisfactory)",
+        "Moderate": "മിതമായത് (Moderate)",
+        "Poor": "മോശം (Poor)",
+        "Very Poor": "വളരെ മോശം (Very Poor)",
+        "Severe": "ഗുരുതരം (Severe)"
+    },
+    "or": {
+        "Good": "ଉତ୍ତମ (Good)",
+        "Satisfactory": "ସନ୍ତୋଷଜନକ (Satisfactory)",
+        "Moderate": "ମଧ୍ୟମ (Moderate)",
+        "Poor": "ଖରାପ (Poor)",
+        "Very Poor": "ଅତି ଖରାପ (Very Poor)",
+        "Severe": "ଗମ୍ଭୀର (Severe)"
     }
 }
 
@@ -242,7 +300,9 @@ INDIC_KEYWORDS_MAP = {
     "bn": ["আবহাওয়া", "বৃষ্টি", "তাপমাত্রা", "ঘূর্ণিঝড়", "আজ", "কাল", "কেমন", "হবে", "কী"],
     "gu": ["હવામાન", "વરસાદ", "તાપમાન", "ખેડૂત", "પાક", "આગાહી", "પડશે", "આજે", "કાલે", "કેવું"],
     "pa": ["ਮੌਸਮ", "ਮੀਂਹ", "ਤਾਪਮਾਨ", "ਕਣਕ", "ਝੋਨਾ", "ਕੱਲ੍ਹ", "ਕਿਵੇਂ", "ਅੱਜ", "ਹੈ"],
-    "kn": ["ಹವಾಮಾನ", "ಮಳೆ", "ತಾಪಮಾನ", "ಬೆಳೆ", "ರೈತ", "ಬರುತ್ತದೆಯೇ", "ಇಂದು", "ನಾಳೆ", "ಹೇಗಿದೆ"]
+    "kn": ["ಹವಾಮಾನ", "ಮಳೆ", "ತಾಪಮಾನ", "ಬೆಳೆ", "ರೈತ", "ಬರುತ್ತದೆಯೇ", "ಇಂದು", "ನಾಳೆ", "ಹೇಗಿದೆ"],
+    "ml": ["കാലാവസ്ഥ", "മഴ", "താപനില", "കൃഷി", "കാറ്റ്", "ചുഴലിക്കാറ്റ്", "ഇന്ന്", "നാളെ", "പെയ്യുമോ", "എങ്ങനെ"],
+    "or": ["ପାଣିପାଗ", "ବର୍ଷା", "ତାପମାତ୍ରା", "ଚାଷ", "କୃଷି", "ପବନ", "ବାତ୍ୟା", "ଆଜି", "କାଲି", "ହେବ", "କିପରି"]
 }
 
 def detect_language(text: str) -> str:
@@ -286,6 +346,8 @@ def detect_language(text: str) -> str:
             return "kn"
         elif 0x0D00 <= code <= 0x0D7F:
             return "ml"
+        elif 0x0B00 <= code <= 0x0B7F:
+            return "or"
         elif 0x0900 <= code <= 0x097F:
             # General Devanagari fallback: check Marathi cities
             for m_city in ["पुणे", "नागपूर", "नाशिक", "सोलापूर", "कोल्हापूर", "संभाजीनगर", "ठाणे", "सांगली", "सातारा", "बारामती"]:
@@ -310,7 +372,9 @@ STOPWORDS = {
     "বৃষ্টি", "আবহাওয়া", "হবে", "কি", "আজ", "কাল",
     "વરસાદ", "હવામાન", "પડશે", "આજે", "કાલે",
     "ਮੀਂਹ", "ਮੌਸਮ", "ਕਿਵੇਂ", "ਹੈ", "ਅੱਜ", "ਕੱਲ੍ਹ",
-    "ಮಳೆ", "ಹವಾಮಾನ", "ಬರುತ್ತದೆಯೇ", "ಇಂದು", "ನಾಳೆ"
+    "ಮಳೆ", "ಹವಾಮಾನ", "ಬರುತ್ತದೆಯೇ", "ಇಂದು", "ನಾಳೆ",
+    "മഴ", "കാലാവസ്ഥ", "പെയ്യുമോ", "ഇന്ന്", "നാളെ", "താപനില", "കൃഷി",
+    "ପାଣିପାଗ", "ବର୍ଷା", "ହେବ", "କି", "ଆଜି", "କାଲି", "ତାପମାତ୍ରା", "କୃଷି"
 }
 
 def extract_location_from_query(text: str, fallback_loc: Optional[str] = None) -> str:
@@ -608,6 +672,7 @@ def process_conversational_query(req: WeatherQueryRequest) -> ChatResponse:
     min_t = today.temp_min if today else weather.current_temp - 3
     max_t = today.temp_max if today else weather.current_temp + 4
     rain_info = analyze_rain_outlook(weather)
+    rain_p = rain_info["current_prob"]
 
     # 1. MARATHI (mr)
     if lang == "mr":
@@ -851,7 +916,63 @@ def process_conversational_query(req: WeatherQueryRequest) -> ChatResponse:
             {"label": "ಎಚ್ಚರಿಕೆ ಕೇಂದ್ರ", "action": "open_alerts"}
         ]
 
-    # 9. ENGLISH (en - Default)
+    # 9. MALAYALAM (ml)
+    elif lang == "ml":
+        cond_ml = translate_weather_condition(weather.condition, "ml")
+        aqi_ml = translate_aqi_status(weather.aqi_status, "ml")
+        speech_text = f"{proper_name} ൽ നിലവിലെ താപനില {weather.current_temp}°C ആണ്. കാലാവസ്ഥ {cond_ml} ആണ്."
+        markdown_resp = (
+            f"### 🌤️ **{proper_name}, {state_name} കാലാവസ്ഥ വിവരങ്ങൾ**\n\n"
+            f"നിലവിൽ {proper_name} ൽ കാലാവസ്ഥ **{cond_ml}** ആണ്. താപനില **{weather.current_temp}°C** (അനുഭവപ്പെടുന്നത്: **{weather.feels_like}°C**).\n\n"
+            f"**പ്രധാന കാലാവസ്ഥ വിവരങ്ങൾ:**\n"
+            f"- 🌡️ **താപനില പരിധി:** കുറഞ്ഞത് **{min_t}°C** മുതൽ കൂടിയത് **{max_t}°C** വരെ\n"
+            f"- 🌧️ **മഴ സാധ്യത:** **{rain_p}%** സാധ്യത (മഴയുടെ അളവ്: {weather.precipitation} mm)\n"
+            f"- 💨 **കാറ്റിന്റെ വേഗതയും ഈർപ്പവും:** കാറ്റ് **{weather.wind_speed} km/h**, ഈർപ്പം **{weather.humidity}%**\n"
+            f"- 🍃 **വായു ഗുണനിലവാരം (AQI):** **{weather.aqi}** ({aqi_ml})\n"
+        )
+        if agri_adv:
+            markdown_resp += f"\n#### 🌾 **കർഷക ഉപദേശം ({agri_adv.crop})**\n- **ജലസേചനം:** {agri_adv.irrigation_advice}\n- **കീടനാശിനി പ്രയോഗം:** {agri_adv.pesticide_advice}\n"
+        if alerts:
+            markdown_resp += f"\n#### 🚨 **ദുരന്ത നിവാരണ മുന്നറിയിപ്പുകൾ**\n"
+            for alt in alerts:
+                markdown_resp += f"- **[{alt.severity.upper()}] {alt.headline}**\n"
+        quick_suggestions = [f"നാളെ {proper_name} ൽ മഴ പെയ്യുമോ?", f"{proper_name} കർഷക ഉപദേശം", f"{proper_name} 7 ദിവസത്തെ കാലാവസ്ഥ"]
+        suggested_actions = [
+            {"label": "റഡാർ മാപ്പ്", "action": "open_map"},
+            {"label": "7 ദിവസത്തെ പ്രവചനം", "action": "open_dashboard"},
+            {"label": "കർഷക ഉപദേശം", "action": "open_agri"},
+            {"label": "മുന്നറിയിപ്പ് കേന്ദ്രം", "action": "open_alerts"}
+        ]
+
+    # 10. ODIA (or)
+    elif lang == "or":
+        cond_or = translate_weather_condition(weather.condition, "or")
+        aqi_or = translate_aqi_status(weather.aqi_status, "or")
+        speech_text = f"{proper_name} ରେ ବର୍ତ୍ତମାନର ତାପମାତ୍ରା {weather.current_temp}°C ଏବଂ ପାଣିପାଗ {cond_or} ଅଟେ।"
+        markdown_resp = (
+            f"### 🌤️ **{proper_name}, {state_name} ପାଣିପାଗ ପୂର୍ବାନୁମାନ**\n\n"
+            f"ବର୍ତ୍ତମାନ {proper_name} ରେ ପାଣିପାଗ **{cond_or}** ରହିଛି ଏବଂ ତାପମାତ୍ରା **{weather.current_temp}°C** (ଅନୁଭୂତ: **{weather.feels_like}°C**) ଅଟେ।\n\n"
+            f"**ମୁଖ୍ୟ ପାଣିପାଗ ବିବରଣୀ:**\n"
+            f"- 🌡️ **ତାପମାତ୍ରା ସୀମା:** ସର୍ବନିମ୍ନ **{min_t}°C** ରୁ ସର୍ବାଧିକ **{max_t}°C**\n"
+            f"- 🌧️ **ବର୍ଷା ସମ୍ଭାବନା:** **{rain_p}%** ସମ୍ଭାବନା (ବର୍ଷା ପରିମାଣ: {weather.precipitation} mm)\n"
+            f"- 💨 **ପବନର ଗତି ଓ ଆର୍ଦ୍ରତା:** ପବନର ବେଗ **{weather.wind_speed} km/h**, ବାୟୁମଣ୍ଡଳୀୟ ଆର୍ଦ୍ରତା **{weather.humidity}%**\n"
+            f"- 🍃 **ବାୟୁ ଗୁଣବତ୍ତା (AQI):** **{weather.aqi}** ({aqi_or})\n"
+        )
+        if agri_adv:
+            markdown_resp += f"\n#### 🌾 **କୃଷକ ପରାମର୍ଶ ({agri_adv.crop})**\n- **ଜଳସେଚନ:** {agri_adv.irrigation_advice}\n- **କୀଟନାଶକ ପ୍ରୟୋଗ:** {agri_adv.pesticide_advice}\n"
+        if alerts:
+            markdown_resp += f"\n#### 🚨 **ସକ୍ରିୟ ବିପର୍ଯ୍ୟୟ ଚେତାବନୀ (CAP Alerts)**\n"
+            for alt in alerts:
+                markdown_resp += f"- **[{alt.severity.upper()}] {alt.headline}**\n"
+        quick_suggestions = [f"କାଲି {proper_name} ରେ ବର୍ଷା ହେବ କି?", f"{proper_name} ପାଇଁ କୃଷି ପରାମର୍ଶ", f"{proper_name} ୭ ଦିନର ପାଣିପାଗ"]
+        suggested_actions = [
+            {"label": "ରାଡାର ମାନଚିତ୍ର", "action": "open_map"},
+            {"label": "୭ ଦିନର ପୂର୍ବାନୁମାନ", "action": "open_dashboard"},
+            {"label": "କୃଷି ପରାମର୍ଶ", "action": "open_agri"},
+            {"label": "ଚେତାବନୀ କେନ୍ଦ୍ର", "action": "open_alerts"}
+        ]
+
+    # 11. ENGLISH (en - Default)
     else:
         speech_text = f"In {proper_name}, it is currently {weather.current_temp} degrees Celsius with {weather.condition}. Wind speed is {weather.wind_speed} kilometers per hour."
         markdown_resp = format_human_weather_story(weather, proper_name, state_name)

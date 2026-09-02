@@ -115,7 +115,7 @@ class CityComparisonData(BaseModel):
 class WeatherQueryRequest(BaseModel):
     query: str
     persona: Optional[str] = "general"
-    language: Optional[str] = "en"
+    language: Optional[str] = "auto"
     location_name: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None

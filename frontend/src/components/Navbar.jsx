@@ -24,7 +24,9 @@ const LANGUAGES = [
   { code: "bn", name: "বাংলা (Bengali)" },
   { code: "gu", name: "ગુજરાતી (Gujarati)" },
   { code: "pa", name: "ਪੰਜਾਬੀ (Punjabi)" },
-  { code: "kn", name: "ಕನ್ನಡ (Kannada)" }
+  { code: "kn", name: "ಕನ್ನಡ (Kannada)" },
+  { code: "ml", name: "മലയാളം (Malayalam)" },
+  { code: "or", name: "ଓଡ଼ିଆ (Odia)" }
 ];
 
 export default function Navbar({

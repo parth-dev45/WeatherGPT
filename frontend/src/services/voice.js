@@ -10,7 +10,9 @@ const LANG_VOICE_MAP = {
   "bn": "bn-IN",
   "gu": "gu-IN",
   "kn": "kn-IN",
-  "pa": "pa-IN"
+  "pa": "pa-IN",
+  "ml": "ml-IN",
+  "or": "or-IN"
 };
 
 export class SpeechEngine {
